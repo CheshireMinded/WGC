@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <title>Military Force Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: white;
+    }
+
+    .calculator {
+      background: #16213e;
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #64b5f6;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      background: #0f3460;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .input-with-button {
+      display: flex;
+      gap: 10px;
+      align-items: stretch;
+    }
+
+    .input-with-button input {
+      flex: 1;
+      padding: 10px;
+      border: 1px solid #555;
+      border-radius: 5px;
+      background: #2a2a3e;
+      color: white;
+      font-size: 16px;
+    }
+
+    .copy-button {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.3s, opacity 0.2s, transform 0.05s;
+    }
+
+    .copy-button:hover {
+      background: #2563eb;
+    }
+
+    .copy-button.success {
+      background: #10b981;
+    }
+
+    .copy-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .remaining-display {
+      background: #4caf50;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .troop-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .troop-card {
+      background: #1e3a8a;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #3b82f6;
+    }
+
+    .troop-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .troop-header h4 {
+      margin: 0;
+      color: white;
+    }
+
+    .percentage-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .percentage-row input {
+      width: 60px;
+      padding: 5px;
+      border: 1px solid #555;
+      border-radius: 3px;
+      background: #2a2a3e;
+      color: white;
+      text-align: center;
+    }
+
+    .troop-result {
+      background: #374151;
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+      user-select: none;
+    }
+
+    .troop-result:hover {
+      background: #4b5563;
+    }
+
+    .troop-result.copied {
+      background: #10b981;
+    }
+
+    .percentage-status {
+      text-align: center;
+      padding: 10px;
+      border-radius: 5px;
+      font-weight: bold;
+      margin-top: 15px;
+    }
+
+    .percentage-valid {
+      background: #065f46;
+      color: #10b981;
+    }
+
+    .percentage-invalid {
+      background: #7f1d1d;
+      color: #ef4444;
+    }
+
+    .summary {
+      background: #374151;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+      border-bottom: 1px solid #4b5563;
+    }
+
+    .disabled {
+      opacity: 0.5;
+    }
+
+    h3 {
+      color: white;
+      margin-top: 0;
+    }
+
+    /* Mobile responsive */
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+
+      .calculator {
+        padding: 20px;
+      }
+
+      .troop-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .input-with-button {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .copy-button {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator">
+    <h1>🎖️ Military Force Calculator</h1>
+
+    <div class="section">
+      <div class="input-group">
+        <label for="troopsToUse">Amount to subtract from 6,462,500:</label>
+        <div class="input-with-button">
+          <input
+            type="number"
+            id="troopsToUse"
+            placeholder="e.g., 5462500"
+            max="6462500"
+            min="0"
+            inputmode="numeric"
+            aria-describedby="remainingDisplay"
+          />
+          <button class="copy-button" id="copyBtn" type="button" onclick="copyResults()">📋 Copy</button>
+        </div>
+      </div>
+      <div class="remaining-display" id="remainingDisplay" aria-live="polite">
+        Available for distribution: 6,462,500 troops
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>Force Distribution</h3>
+
+      <div class="troop-grid">
+        <div class="troop-card">
+          <div class="troop-header">
+            <input type="checkbox" id="armyToggle" checked aria-labelledby="armyLabel"/>
+            <label id="armyLabel" for="armyToggle"><h4>🪖 Army</h4></label>
+          </div>
+          <div class="percentage-row">
+            <label for="armyPercentage" class="sr-only" style="position:absolute;left:-9999px;">Army percentage</label>
+            <input type="number" id="armyPercentage" value="40" min="0" max="100" inputmode="numeric" />
+            <span>%</span>
+          </div>
+          <div class="troop-result" id="armyResult" role="button" tabindex="0" onclick="copyTroopCount('army')" onkeypress="if(event.key==='Enter'){copyTroopCount('army')}">0 troops</div>
+        </div>
+
+        <div class="troop-card">
+          <div class="troop-header">
+            <input type="checkbox" id="marinesToggle" checked aria-labelledby="marinesLabel"/>
+            <label id="marinesLabel" for="marinesToggle"><h4>⚓ Marines</h4></label>
+          </div>
+          <div class="percentage-row">
+            <label for="marinesPercentage" class="sr-only" style="position:absolute;left:-9999px;">Marines percentage</label>
+            <input type="number" id="marinesPercentage" value="30" min="0" max="100" inputmode="numeric" />
+            <span>%</span>
+          </div>
+          <div class="troop-result" id="marinesResult" role="button" tabindex="0" onclick="copyTroopCount('marines')" onkeypress="if(event.key==='Enter'){copyTroopCount('marines')}">0 troops</div>
+        </div>
+
+        <div class="troop-card">
+          <div class="troop-header">
+            <input type="checkbox" id="airforceToggle" checked aria-labelledby="airforceLabel"/>
+            <label id="airforceLabel" for="airforceToggle"><h4>✈️ Air Force</h4></label>
+          </div>
+          <div class="percentage-row">
+            <label for="airforcePercentage" class="sr-only" style="position:absolute;left:-9999px;">Air Force percentage</label>
+            <input type="number" id="airforcePercentage" value="30" min="0" max="100" inputmode="numeric" />
+            <span>%</span>
+          </div>
+          <div class="troop-result" id="airforceResult" role="button" tabindex="0" onclick="copyTroopCount('airforce')" onkeypress="if(event.key==='Enter'){copyTroopCount('airforce')}">0 troops</div>
+        </div>
+      </div>
+
+      <div class="percentage-status" id="percentageTotal" aria-live="polite">
+        Total: 100%
+      </div>
+    </div>
+
+    <div class="summary">
+      <h3>📊 Summary</h3>
+      <div class="summary-grid">
+        <div class="summary-row">
+          <span>Subtracted:</span>
+          <span id="subtractedAmount">0</span>
+        </div>
+        <div class="summary-row">
+          <span>Distributed:</span>
+          <span id="totalDeployed">0</span>
+        </div>
+        <div class="summary-row">
+          <span>Army:</span>
+          <span id="armySummary">0</span>
+        </div>
+        <div class="summary-row">
+          <span>Marines:</span>
+          <span id="marinesSummary">0</span>
+        </div>
+        <div class="summary-row">
+          <span>Air Force:</span>
+          <span id="airforceSummary">0</span>
+        </div>
+        <div class="summary-row">
+          <span>Remainder:</span>
+          <span id="remainingSummary">6,462,500</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h3>⚔️ Battle Results</h3>
+      <p style="color: #ccc; margin-bottom: 15px;">Ready to hit the control point? Record your battle results and track troop losses.</p>
+      <button onclick="goToBattleResults()" style="background: #ef4444; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s;">
+        ⚔️ Record Battle Results
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const MAX_TROOPS = 6462500;
+    const BRANCHES = [
+      { key: "army", label: "Army" },
+      { key: "marines", label: "Marines" },
+      { key: "airforce", label: "Air Force" },
+    ];
+
+    const els = {
+      troopsToUse: document.getElementById("troopsToUse"),
+      remainingDisplay: document.getElementById("remainingDisplay"),
+      percentageTotal: document.getElementById("percentageTotal"),
+      subtractedAmount: document.getElementById("subtractedAmount"),
+      totalDeployed: document.getElementById("totalDeployed"),
+      remainingSummary: document.getElementById("remainingSummary"),
+      copyBtn: document.getElementById("copyBtn"),
+    };
+
+    function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
+    function readInt(id, def = 0) {
+      const v = document.getElementById(id).value.trim();
+      const num = Number(v);
+      return Number.isFinite(num) ? Math.trunc(num) : def;
+    }
+
+    function getBranchState() {
+      return BRANCHES.map(b => {
+        const active = document.getElementById(b.key + "Toggle").checked;
+        const pct = active ? clamp(readInt(b.key + "Percentage"), 0, 100) : 0;
+        return { ...b, active, pct };
+      });
+    }
+
+    function normalizePercentages(states) {
+      // Normalize active branch percentages to total 100 (largest-remainder method)
+      const active = states.filter(s => s.active);
+      const sum = active.reduce((a, s) => a + s.pct, 0);
+
+      if (active.length === 0) return states;
+
+      if (sum === 100) return states;
+
+      if (sum === 0) {
+        const equal = Math.floor(100 / active.length);
+        let remainder = 100 - equal * active.length;
+        active.forEach(s => (s.pct = equal));
+        for (let i = 0; i < active.length && remainder > 0; i++, remainder--) {
+          active[i].pct += 1;
+        }
+        return states;
+      }
+
+      const scaled = [];
+      let accum = 0;
+      active.forEach(s => {
+        const exact = (s.pct * 100) / sum;
+        const floored = Math.floor(exact);
+        scaled.push({ s, exact, floored, frac: exact - floored });
+        s.pct = floored;
+        accum += floored;
+      });
+
+      let leftover = 100 - accum;
+      scaled.sort((a, b) => b.frac - a.frac);
+      for (let i = 0; i < scaled.length && leftover > 0; i++, leftover--) {
+        scaled[i].s.pct += 1;
+      }
+      return states;
+    }
+
+    function preciseAllocate(total, states) {
+      // Allocate troop counts exactly to total using largest remainder
+      const active = states.filter(s => s.active);
+      const shares = active.map(s => {
+        const exact = (total * s.pct) / 100;
+        const floored = Math.floor(exact);
+        return { s, exact, floored, frac: exact - floored };
+      });
+
+      let assigned = shares.reduce((a, x) => a + x.floored, 0);
+      let remainder = total - assigned;
+
+      shares.sort((a, b) => b.frac - a.frac);
+      for (let i = 0; i < shares.length && remainder > 0; i++, remainder--) {
+        shares[i].floored += 1;
+      }
+
+      const map = new Map();
+      shares.forEach(x => map.set(x.s.key, x.floored));
+      states.forEach(s => { if (!map.has(s.key)) map.set(s.key, 0); });
+      return map;
+    }
+
+    function updateCardStates(states) {
+      states.forEach(({ key, active }) => {
+        const percentageInput = document.getElementById(key + "Percentage");
+        percentageInput.disabled = !active;
+      });
+    }
+
+    function updateCalculations({ autoNormalize = true } = {}) {
+      // Clamp troops input
+      const subRaw = readInt("troopsToUse", 0);
+      const validSubtraction = clamp(subRaw, 0, MAX_TROOPS);
+      if (subRaw !== validSubtraction) {
+        els.troopsToUse.value = String(validSubtraction);
+      }
+      const remainingTroops = MAX_TROOPS - validSubtraction;
+
+      els.remainingDisplay.textContent =
+        `Available for distribution: ${remainingTroops.toLocaleString()} troops`;
+
+      let states = getBranchState();
+      if (autoNormalize) states = normalizePercentages(states);
+
+      const totalPct = states.reduce((a, s) => a + (s.active ? s.pct : 0), 0);
+
+      // Status UI
+      els.percentageTotal.textContent = `Total: ${totalPct}%` + (totalPct !== 100 ? " (automatically normalized)" : "");
+      els.percentageTotal.className = `percentage-status ${totalPct === 100 ? "percentage-valid" : "percentage-invalid"}`;
+
+      // Enable copy only if at least one branch is active
+      els.copyBtn.disabled = (states.filter(s => s.active).length === 0);
+
+      // Allocation
+      const allocations = preciseAllocate(remainingTroops, states);
+      let distributed = 0;
+
+      BRANCHES.forEach(({ key }) => {
+        const active = states.find(s => s.key === key).active;
+        const count = allocations.get(key);
+        const resEl = document.getElementById(key + "Result");
+        resEl.textContent = active ? `${count.toLocaleString()} troops` : "Disabled";
+        distributed += count;
+
+        // Reflect normalized % back into inputs
+        document.getElementById(key + "Percentage").value =
+          states.find(s => s.key === key).pct;
+      });
+
+      const unassigned = remainingTroops - distributed;
+
+      // Summary
+      els.subtractedAmount.textContent = validSubtraction.toLocaleString();
+      els.totalDeployed.textContent = distributed.toLocaleString();
+      document.getElementById("armySummary").textContent = allocations.get("army").toLocaleString();
+      document.getElementById("marinesSummary").textContent = allocations.get("marines").toLocaleString();
+      document.getElementById("airforceSummary").textContent = allocations.get("airforce").toLocaleString();
+      els.remainingSummary.textContent = unassigned.toLocaleString();
+
+      updateCardStates(states);
+    }
+
+    function autoAdjustPercentages() {
+      const states = getBranchState();
+      const active = states.filter(s => s.active);
+      if (active.length === 1) {
+        states.forEach(s => s.pct = s.active ? 100 : 0);
+        states.forEach(s => document.getElementById(s.key + "Percentage").value = s.pct);
+      }
+    }
+
+    async function writeClipboard(text) {
+      try {
+        await navigator.clipboard.writeText(text);
+        return true;
+      } catch (e) {
+        // Fallback for non-secure contexts
+        const ta = document.createElement("textarea");
+        ta.value = text;
+        ta.setAttribute("readonly", "");
+        ta.style.position = "fixed";
+        ta.style.left = "-9999px";
+        document.body.appendChild(ta);
+        ta.select();
+        const ok = document.execCommand("copy");
+        document.body.removeChild(ta);
+        return ok;
+      }
+    }
+
+    async function copyTroopCount(branch) {
+      const toggle = document.getElementById(branch + "Toggle");
+      if (!toggle.checked) return;
+
+      // Ensure latest calc
+      updateCalculations();
+
+      const resultText = document.getElementById(branch + "Result").textContent;
+      const text = `${({army:"Army", marines:"Marines", airforce:"Air Force"})[branch]}: ${resultText.replace(" troops","")}`;
+
+      const ok = await writeClipboard(text);
+      const el = document.getElementById(branch + "Result");
+      const original = el.textContent;
+      el.classList.add("copied");
+      el.textContent = ok ? "Copied!" : "Copy failed";
+      setTimeout(() => { el.classList.remove("copied"); el.textContent = original; }, 1500);
+    }
+
+    async function copyResults() {
+      updateCalculations();
+      const parts = BRANCHES
+        .filter(b => document.getElementById(b.key + "Toggle").checked)
+        .map(b => `${b.label}: ${document.getElementById(b.key + "Result").textContent.replace(" troops","")}`);
+      const ok = await writeClipboard(parts.join("\n"));
+      const btn = els.copyBtn;
+      btn.classList.add("success");
+      btn.textContent = ok ? "✓ Copied" : "⚠️ Copy failed";
+      setTimeout(() => { btn.classList.remove("success"); btn.textContent = "📋 Copy"; }, 2000);
+    }
+
+    // Event listeners
+    els.troopsToUse.addEventListener("input", () => updateCalculations());
+    BRANCHES.forEach(({ key }) => {
+      document.getElementById(key + "Toggle").addEventListener("change", () => { autoAdjustPercentages(); updateCalculations(); });
+      document.getElementById(key + "Percentage").addEventListener("input", () => updateCalculations());
+    });
+
+    // Battle Results Navigation
+    function goToBattleResults() {
+      // Save current calculator data to localStorage with more details
+      const calculatorData = {
+        army: parseInt(document.getElementById("armyResult").textContent.replace(/[^\d]/g, '')) || 0,
+        marines: parseInt(document.getElementById("marinesResult").textContent.replace(/[^\d]/g, '')) || 0,
+        airforce: parseInt(document.getElementById("airforceResult").textContent.replace(/[^\d]/g, '')) || 0,
+        // Additional calculator context
+        troopsToUse: parseInt(els.troopsToUse.value) || 0,
+        armyPercentage: parseInt(document.getElementById("armyPercentage").value) || 0,
+        marinesPercentage: parseInt(document.getElementById("marinesPercentage").value) || 0,
+        airforcePercentage: parseInt(document.getElementById("airforcePercentage").value) || 0,
+        remainingTroops: MAX_TROOPS - (parseInt(els.troopsToUse.value) || 0),
+        timestamp: Date.now()
+      };
+      
+      localStorage.setItem('lastCalculatorData', JSON.stringify(calculatorData));
+      
+      // Navigate to battle results page
+      window.location.href = 'battle_results.html';
+    }
+
+    // First render
+    updateCalculations();
+  </script>
+</body>
+</html>

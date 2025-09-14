@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+  <title>Military Force Calculators</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+      text-align: center;
+    }
+
+    h1 {
+      color: #2d3748;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #718096;
+      font-size: 1.1rem;
+      margin-bottom: 40px;
+    }
+
+    .calculators-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .calculator-card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+
+    .calculator-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      border-color: #667eea;
+    }
+
+    .calculator-icon {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      display: block;
+    }
+
+    .calculator-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 15px;
+    }
+
+    .calculator-description {
+      color: #718096;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .calculator-features {
+      list-style: none;
+      text-align: left;
+    }
+
+    .calculator-features li {
+      color: #4a5568;
+      margin-bottom: 8px;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .calculator-features li:before {
+      content: "✓";
+      position: absolute;
+      left: 0;
+      color: #48bb78;
+      font-weight: bold;
+    }
+
+    .footer {
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid #e2e8f0;
+      color: #718096;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 2rem;
+      }
+      
+      .calculators-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .calculator-card {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎖️ Military Force Calculators</h1>
+    <p class="subtitle">Professional tools for military force distribution and troop management</p>
+    
+    <div class="calculators-grid">
+      <a href="control_point.html" class="calculator-card">
+        <span class="calculator-icon">🎯</span>
+        <h2 class="calculator-title">Control Point Calculator</h2>
+        <p class="calculator-description">
+          Calculate optimal troop distribution for control point operations. 
+          Subtract troops from your total force and distribute the remainder across military branches.
+        </p>
+        <ul class="calculator-features">
+          <li>Subtract troops from 6,462,500 total</li>
+          <li>Configure Army, Marines, Air Force percentages</li>
+          <li>Real-time calculations and validation</li>
+          <li>Copy results to clipboard</li>
+          <li>Battle results tracking integration</li>
+        </ul>
+      </a>
+
+      <a href="troop_swap_calculator.html" class="calculator-card">
+        <span class="calculator-icon">🔄</span>
+        <h2 class="calculator-title">Troop Swap Calculator</h2>
+        <p class="calculator-description">
+          Manage alliance troop swaps and calculate new force ratios. 
+          Add players, configure their deployments, and see how it affects overall alliance composition.
+        </p>
+        <ul class="calculator-features">
+          <li>Manage multiple player swaps</li>
+          <li>Calculate new alliance ratios</li>
+          <li>Visual ratio comparison charts</li>
+          <li>Manual total override options</li>
+          <li>Export individual player data</li>
+        </ul>
+      </a>
+
+      <a href="known_enemies.html" class="calculator-card">
+        <span class="calculator-icon">👹</span>
+        <h2 class="calculator-title">Known Enemies Tracker</h2>
+        <p class="calculator-description">
+          Track enemy information including troop compositions, defense capabilities, 
+          ratios, and strategic intelligence for better tactical planning.
+        </p>
+        <ul class="calculator-features">
+          <li>Record enemy troop compositions</li>
+          <li>Track defense capabilities and ratios</li>
+          <li>Monitor mecha, gear, and research levels</li>
+          <li>Store strategic notes and intelligence</li>
+          <li>Search and export enemy database</li>
+        </ul>
+      </a>
+    </div>
+
+    <div class="footer">
+      <p>Professional military force management tools • Built for strategic planning and operations</p>
+    </div>
+  </div>
+</body>
+</html>
