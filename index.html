@@ -100,7 +100,45 @@
 <script>
   if ('serviceWorker' in navigator) {
     // register relative to the current path for GH Pages
-    navigator.serviceWorker.register('./service-worker.js');
+    navigator.serviceWorker.register('./service-worker.js').then(registration => {
+      // Check for updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New content is available, show update notification
+            showUpdateNotification();
+          }
+        });
+      });
+    });
+  }
+
+  function showUpdateNotification() {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed; top: 20px; right: 20px; z-index: 1000;
+      background: #007bff; color: white; padding: 12px 16px;
+      border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-family: Arial, sans-serif; font-size: 14px;
+      display: flex; align-items: center; gap: 12px;
+    `;
+    notification.innerHTML = `
+      <span>Update available</span>
+      <button onclick="window.location.reload()" style="
+        background: white; color: #007bff; border: none;
+        padding: 6px 12px; border-radius: 4px; cursor: pointer;
+        font-weight: bold;
+      ">Reload</button>
+    `;
+    document.body.appendChild(notification);
+    
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 10000);
   }
 </script>
 

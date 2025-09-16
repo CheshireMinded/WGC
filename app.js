@@ -314,39 +314,39 @@ async function copyPlayer(playerId){
 }
 
 /** ---------- IndexedDB Storage ---------- **/
-// ask for durable/persistent storage when available
+// Ask for durable storage (Chrome/Edge/Firefox; ok if unsupported)
 async function requestPersistence() {
-  if (navigator.storage && navigator.storage.persist) {
+  if (navigator.storage?.persist) {
     const granted = await navigator.storage.persist();
-    console.log("Persistent storage granted?", granted);
+    console.log("Durable storage granted?", granted);
   }
 }
 
-// simple IDB helpers
-function openDB(name, version = 1) {
+// Tiny IndexedDB KV store
+function openDB(name = "wgc", version = 1) {
   return new Promise((res, rej) => {
     const req = indexedDB.open(name, version);
-    req.onupgradeneeded = () => req.result.createObjectStore('kv');
+    req.onupgradeneeded = () => req.result.createObjectStore("kv");
     req.onsuccess = () => res(req.result);
     req.onerror = () => rej(req.error);
   });
 }
 
 async function dbSet(key, val) {
-  const db = await openDB('trooptools');
+  const db = await openDB();
   return new Promise((res, rej) => {
-    const tx = db.transaction('kv', 'readwrite');
-    tx.objectStore('kv').put(val, key);
+    const tx = db.transaction("kv", "readwrite");
+    tx.objectStore("kv").put(val, key);
     tx.oncomplete = () => res();
     tx.onerror = () => rej(tx.error);
   });
 }
 
 async function dbGet(key) {
-  const db = await openDB('trooptools');
+  const db = await openDB();
   return new Promise((res, rej) => {
-    const tx = db.transaction('kv', 'readonly');
-    const req = tx.objectStore('kv').get(key);
+    const tx = db.transaction("kv", "readonly");
+    const req = tx.objectStore("kv").get(key);
     req.onsuccess = () => res(req.result);
     req.onerror = () => rej(req.error);
   });
