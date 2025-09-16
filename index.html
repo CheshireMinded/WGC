@@ -81,6 +81,7 @@
 
   // PWA Install functionality
   window.addEventListener('beforeinstallprompt', (e) => {
+    console.log('PWA install prompt available');
     // Prevent the mini-infobar from appearing on mobile
     e.preventDefault();
     // Stash the event so it can be triggered later
@@ -89,22 +90,40 @@
     installBtn.style.display = 'block';
   });
 
+  // Show install button after a delay if prompt doesn't fire
+  setTimeout(() => {
+    if (!deferredPrompt && installBtn.style.display === 'none') {
+      console.log('Showing fallback install instructions');
+      installBtn.style.display = 'block';
+      installBtn.innerHTML = '📱 Install Instructions';
+      installStatus.innerHTML = '<div class="info">Click the install button in your browser menu, or use "Add to Home Screen" on mobile.</div>';
+    }
+  }, 2000);
+
   installBtn.addEventListener('click', async () => {
     if (deferredPrompt) {
-      // Show the install prompt
-      deferredPrompt.prompt();
-      // Wait for the user to respond to the prompt
-      const { outcome } = await deferredPrompt.userChoice;
-      
-      if (outcome === 'accepted') {
-        installStatus.innerHTML = '<div class="success">✅ Troop Tools installed successfully!</div>';
-        installBtn.style.display = 'none';
-      } else {
-        installStatus.innerHTML = '<div class="info">Installation cancelled. You can install later from your browser menu.</div>';
+      try {
+        // Show the install prompt
+        deferredPrompt.prompt();
+        // Wait for the user to respond to the prompt
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          installStatus.innerHTML = '<div class="success">✅ Troop Tools installed successfully!</div>';
+          installBtn.style.display = 'none';
+        } else {
+          installStatus.innerHTML = '<div class="info">Installation cancelled. You can install later from your browser menu.</div>';
+        }
+        
+        // Clear the deferredPrompt
+        deferredPrompt = null;
+      } catch (error) {
+        console.error('Install prompt error:', error);
+        installStatus.innerHTML = '<div class="info">Installation failed. Please use your browser menu to install.</div>';
       }
-      
-      // Clear the deferredPrompt
-      deferredPrompt = null;
+    } else {
+      // Fallback instructions
+      installStatus.innerHTML = '<div class="info"><strong>To install:</strong><br>• Chrome: Click ⋮ menu → "Install app"<br>• Safari: Share → "Add to Home Screen"<br>• Samsung Internet: Menu → "Add to Home screen"</div>';
     }
   });
 
