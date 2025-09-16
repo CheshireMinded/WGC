@@ -9,8 +9,7 @@ const ASSETS = [
   // Your other pages:
   "./battle_results.html",
   "./control_point.html",
-  "./known_enemies.html",
-  "./troop_swap_calculator.html"
+  "./known_enemies.html"
 ];
 
 // Precache core files
