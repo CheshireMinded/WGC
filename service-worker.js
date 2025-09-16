@@ -1,4 +1,5 @@
-const CACHE = "wgc-v1";
+const CACHE = "wgc-v2"; // bump version to invalidate old caches!
+
 const ASSETS = [
   "./",
   "./index.html",
@@ -6,18 +7,16 @@ const ASSETS = [
   "./styles.css",
   "./icon-192.png",
   "./icon-512.png",
-  // Your other pages:
+  // precache other HTML pages so they work offline:
   "./battle_results.html",
   "./control_point.html",
   "./known_enemies.html"
 ];
 
-// Precache core files
 self.addEventListener("install", (e) => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
 });
 
-// Clean old caches
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -26,25 +25,19 @@ self.addEventListener("activate", (e) => {
   );
 });
 
-// Network-first for navigations; cache-first for everything else
-self.addEventListener("fetch", (e) => {
-  const req = e.request;
+self.addEventListener("fetch", (event) => {
+  const req = event.request;
 
-  // HTML navigations
+  // HTML navigations -> network-first, fallback to index.html
   if (req.mode === "navigate") {
-    e.respondWith(
-      fetch(req).then(res => {
-        // keep a fresh copy of index (app shell)
-        const copy = res.clone();
-        caches.open(CACHE).then(c => c.put("./", copy)).catch(()=>{});
-        return res;
-      }).catch(() => caches.match("./"))
+    event.respondWith(
+      fetch(req).catch(() => caches.match("./index.html"))
     );
     return;
   }
 
-  // Static assets
-  e.respondWith(
+  // Static assets -> cache-first
+  event.respondWith(
     caches.match(req).then(cached => cached || fetch(req))
   );
 });
