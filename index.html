@@ -65,7 +65,7 @@
       <li>✅ Automatic updates</li>
       <li>✅ Persistent data storage</li>
     </ul>
-    <button id="installBtn" class="install-button" style="display: none;">
+    <button id="installBtn" class="install-button">
       📱 Install Troop Tools
     </button>
     <div id="installStatus" class="install-status"></div>
@@ -86,27 +86,34 @@
     e.preventDefault();
     // Stash the event so it can be triggered later
     deferredPrompt = e;
-    // Show the install button
-    installBtn.style.display = 'block';
+    // Update button text to show it's ready
+    installBtn.innerHTML = '📱 Install Troop Tools';
+    installStatus.innerHTML = '<div class="info">Ready to install! Click the button above.</div>';
   });
 
-  // Show install button after a delay if prompt doesn't fire
-  setTimeout(() => {
-    if (!deferredPrompt && installBtn.style.display === 'none') {
-      console.log('Showing fallback install instructions');
-      installBtn.style.display = 'block';
-      installBtn.innerHTML = '📱 Install Instructions';
-      installStatus.innerHTML = '<div class="info">Click the install button in your browser menu, or use "Add to Home Screen" on mobile.</div>';
-    }
-  }, 2000);
+  // Check if PWA prompt is not available after page load
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      if (!deferredPrompt) {
+        console.log('PWA install prompt not available - showing fallback');
+        installBtn.innerHTML = '📱 Install Instructions';
+        installStatus.innerHTML = '<div class="info">Use your browser menu to install this app.</div>';
+      }
+    }, 1000);
+  });
 
-  installBtn.addEventListener('click', async () => {
+  installBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    console.log('Install button clicked, deferredPrompt:', !!deferredPrompt);
+    
     if (deferredPrompt) {
       try {
+        console.log('Showing install prompt...');
         // Show the install prompt
         deferredPrompt.prompt();
         // Wait for the user to respond to the prompt
         const { outcome } = await deferredPrompt.userChoice;
+        console.log('Install outcome:', outcome);
         
         if (outcome === 'accepted') {
           installStatus.innerHTML = '<div class="success">✅ Troop Tools installed successfully!</div>';
@@ -123,7 +130,8 @@
       }
     } else {
       // Fallback instructions
-      installStatus.innerHTML = '<div class="info"><strong>To install:</strong><br>• Chrome: Click ⋮ menu → "Install app"<br>• Safari: Share → "Add to Home Screen"<br>• Samsung Internet: Menu → "Add to Home screen"</div>';
+      console.log('Showing fallback instructions');
+      installStatus.innerHTML = '<div class="info"><strong>To install:</strong><br>• Chrome: Click ⋮ menu → "Install app"<br>• Safari: Share → "Add to Home Screen"<br>• Samsung Internet: Menu → "Add to Home screen"<br>• Edge: Click ⋮ menu → "Apps" → "Install this site as an app"</div>';
     }
   });
 
