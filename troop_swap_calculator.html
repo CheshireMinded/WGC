@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="X-Content-Type-Options" content="nosniff">
+<meta http-equiv="X-Frame-Options" content="DENY">
+<meta http-equiv="X-XSS-Protection" content="1; mode=block">
+<meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+
+<!-- PWA Meta Tags -->
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#0f3460">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Troop Tools">
+<link rel="apple-touch-icon" href="./icon-192.png">
+
+<title>Troop Swap Calculator - Troop Tools</title>
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+<div class="nav-bar">
+  <a href="./" class="nav-link">← Back to Troop Tools</a>
+</div>
+
+<h1>Troop Swap Calculator</h1>
+
+<div class="section" aria-live="polite">
+  <h2>Initial Alliance Ratio <span id="initStatus" class="pill ok" style="display:none">normalized</span></h2>
+  <div class="flex-row">
+    <span class="troop-label army">Army</span><input type="number" id="initArmy" value="34" min="0" max="100" inputmode="numeric" />
+    <span class="troop-label marines">Marines</span><input type="number" id="initMarines" value="33" min="0" max="100" inputmode="numeric" />
+    <span class="troop-label airforce">Air Force</span><input type="number" id="initAirforce" value="33" min="0" max="100" inputmode="numeric" />
+  </div>
+  <p class="small">Total Deployment: <strong id="totalDeploymentText">6,462,500</strong> troops</p>
+</div>
+
+<div class="section">
+  <div class="flex-row" style="justify-content:space-between; gap:10px;">
+    <h2>Swapped Players</h2>
+    <div class="flex-row" style="gap:6px;">
+      <button id="addBtn">Add Player Swap</button>
+      <button class="secondary" id="removeBtn" disabled>Remove Last</button>
+    </div>
+  </div>
+  <div id="playersContainer"></div>
+</div>
+
+<div class="section">
+  <h2>Manual Alliance Total Override</h2>
+  <div class="flex-row">
+    <label for="currentTotal">Current Total Deployed:</label>
+    <input type="number" id="currentTotal" value="6462500" min="0" inputmode="numeric" />
+    <button id="calculateNeededBtn">Calculate Needed</button>
+  </div>
+  <div id="neededResult" style="margin-top:8px; position: relative;">
+    <span id="neededTooltip" class="tooltip">Copied!</span>
+  </div>
+  <p class="small">Uses the <em>initial alliance ratio</em> to suggest how to fill the gap.</p>
+</div>
+
+<div class="flex-row" style="gap:8px; margin-bottom:8px;">
+  <button id="calculateBtn">Calculate New Ratio</button>
+  <button class="secondary" id="resetBtn">Clear Chart</button>
+</div>
+
+<div class="section result" id="result" aria-live="polite"></div>
+
+<div class="section">
+  <h2>Alliance Ratio Visualization</h2>
+  <div class="legend">
+    <span><span class="legend-swatch orig-swatch"></span>Original</span>
+    <span><span class="legend-swatch" style="background:#111; opacity:.2; border:1px solid #aaa;"></span>Background</span>
+    <span><span class="legend-swatch" style="background:var(--army);"></span>Army</span>
+    <span><span class="legend-swatch" style="background:var(--marines);"></span>Marines</span>
+    <span><span class="legend-swatch" style="background:var(--airforce);"></span>Air Force</span>
+  </div>
+
+  <div id="chart">
+    <div class="bar-row">Army</div>
+    <div class="bar-container">
+      <div class="bar army orig" id="barArmyOrig" style="width:0%"></div>
+      <div class="bar army" id="barArmyNew" style="width:0%"></div>
+    </div>
+
+    <div class="bar-row">Marines</div>
+    <div class="bar-container">
+      <div class="bar marines orig" id="barMarinesOrig" style="width:0%"></div>
+      <div class="bar marines" id="barMarinesNew" style="width:0%"></div>
+    </div>
+
+    <div class="bar-row">Air Force</div>
+    <div class="bar-container">
+      <div class="bar airforce orig" id="barAirforceOrig" style="width:0%"></div>
+      <div class="bar airforce" id="barAirforceNew" style="width:0%"></div>
+    </div>
+  </div>
+</div>
+
+<script src="./app.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    // register relative to the current path for GH Pages
+    navigator.serviceWorker.register('./service-worker.js').then(registration => {
+      // Check for updates
+      registration.addEventListener('updatefound', () => {
+        const newWorker = registration.installing;
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            // New content is available, show update notification
+            showUpdateNotification();
+          }
+        });
+      });
+    });
+  }
+
+  function showUpdateNotification() {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed; top: 20px; right: 20px; z-index: 1000;
+      background: #007bff; color: white; padding: 12px 16px;
+      border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      font-family: Arial, sans-serif; font-size: 14px;
+      display: flex; align-items: center; gap: 12px;
+    `;
+    notification.innerHTML = `
+      <span>Update available</span>
+      <button onclick="window.location.reload()" style="
+        background: white; color: #007bff; border: none;
+        padding: 6px 12px; border-radius: 4px; cursor: pointer;
+        font-weight: bold;
+      ">Reload</button>
+    `;
+    document.body.appendChild(notification);
+    
+    // Auto-hide after 10 seconds
+    setTimeout(() => {
+      if (notification.parentNode) {
+        notification.parentNode.removeChild(notification);
+      }
+    }, 10000);
+  }
+</script>
+
+</body>
+</html>

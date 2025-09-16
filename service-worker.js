@@ -8,6 +8,7 @@ const ASSETS = [
   "./icon-192.png",
   "./icon-512.png",
   // precache other HTML pages so they work offline:
+  "./troop_swap_calculator.html",
   "./battle_results.html",
   "./control_point.html",
   "./known_enemies.html"
