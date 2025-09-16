@@ -129,6 +129,73 @@ button:disabled{opacity:.6;cursor:not-allowed;}
   color: var(--sub);
 }
 
+/* Install section styles */
+.install-section {
+  text-align: center;
+}
+
+.install-benefits {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+  text-align: left;
+  max-width: 400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.install-benefits li {
+  padding: 8px 0;
+  color: var(--text);
+  font-size: 0.95em;
+}
+
+.install-button {
+  background: linear-gradient(135deg, var(--accent), var(--accentHover));
+  color: white;
+  border: none;
+  padding: 16px 32px;
+  border-radius: 12px;
+  font-size: 1.1em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+  margin: 20px 0;
+}
+
+.install-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+}
+
+.install-button:active {
+  transform: translateY(0);
+}
+
+.install-status {
+  margin-top: 15px;
+  min-height: 24px;
+}
+
+.install-status .success {
+  color: var(--ok);
+  font-weight: bold;
+  background: #ecfdf5;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #d1fae5;
+}
+
+.install-status .info {
+  color: #6b7280;
+  font-style: italic;
+  background: #f9fafb;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+}
+
 /* responsive */
 @media (max-width:768px){
   body{padding:10px;}

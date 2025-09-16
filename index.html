@@ -55,6 +55,24 @@
 </div>
 
 <div class="section">
+  <h2>Install Troop Tools</h2>
+  <div class="install-section">
+    <p>Install Troop Tools as a native app on your device for the best experience:</p>
+    <ul class="install-benefits">
+      <li>✅ Works completely offline</li>
+      <li>✅ Fast access from home screen</li>
+      <li>✅ No browser UI - full screen app</li>
+      <li>✅ Automatic updates</li>
+      <li>✅ Persistent data storage</li>
+    </ul>
+    <button id="installBtn" class="install-button" style="display: none;">
+      📱 Install Troop Tools
+    </button>
+    <div id="installStatus" class="install-status"></div>
+  </div>
+</div>
+
+<div class="section">
   <h2>Quick Stats</h2>
   <div class="stats-grid">
     <div class="stat-card">
@@ -74,15 +92,53 @@
 
 <script src="./app.js"></script>
 <script>
+  let deferredPrompt;
+  const installBtn = document.getElementById('installBtn');
+  const installStatus = document.getElementById('installStatus');
+
+  // PWA Install functionality
+  window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent the mini-infobar from appearing on mobile
+    e.preventDefault();
+    // Stash the event so it can be triggered later
+    deferredPrompt = e;
+    // Show the install button
+    installBtn.style.display = 'block';
+  });
+
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      // Show the install prompt
+      deferredPrompt.prompt();
+      // Wait for the user to respond to the prompt
+      const { outcome } = await deferredPrompt.userChoice;
+      
+      if (outcome === 'accepted') {
+        installStatus.innerHTML = '<div class="success">✅ Troop Tools installed successfully!</div>';
+        installBtn.style.display = 'none';
+      } else {
+        installStatus.innerHTML = '<div class="info">Installation cancelled. You can install later from your browser menu.</div>';
+      }
+      
+      // Clear the deferredPrompt
+      deferredPrompt = null;
+    }
+  });
+
+  // Check if app is already installed
+  window.addEventListener('appinstalled', () => {
+    installStatus.innerHTML = '<div class="success">🎉 Troop Tools is now installed!</div>';
+    installBtn.style.display = 'none';
+  });
+
+  // Service Worker registration
   if ('serviceWorker' in navigator) {
-    // register relative to the current path for GH Pages
     navigator.serviceWorker.register('./service-worker.js').then(registration => {
       // Check for updates
       registration.addEventListener('updatefound', () => {
         const newWorker = registration.installing;
         newWorker.addEventListener('statechange', () => {
           if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            // New content is available, show update notification
             showUpdateNotification();
           }
         });
@@ -109,7 +165,6 @@
     `;
     document.body.appendChild(notification);
     
-    // Auto-hide after 10 seconds
     setTimeout(() => {
       if (notification.parentNode) {
         notification.parentNode.removeChild(notification);
