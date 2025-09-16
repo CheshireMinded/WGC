@@ -31,41 +31,6 @@ els.totalDeploymentText.textContent = TOTAL_DEPLOYMENT.toLocaleString();
 const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
 function num(v, d=0){ const n = Number(String(v).trim()); return Number.isFinite(n) ? n : d; }
 
-// Security: Input sanitization
-function sanitizeInput(input) {
-  if (typeof input !== 'string') return '';
-  return input.replace(/[<>\"'&]/g, function(match) {
-    const escape = {
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      "'": '&#x27;',
-      '&': '&amp;'
-    };
-    return escape[match];
-  });
-}
-
-// Security: Safe text content setting
-function setTextContent(element, text) {
-  if (element && typeof text === 'string') {
-    element.textContent = text;
-  }
-}
-
-// Security: Safe HTML setting with sanitization
-function setInnerHTML(element, html) {
-  if (element && typeof html === 'string') {
-    // Only allow safe HTML patterns for our specific use case
-    const safePattern = /^<div><span class="troop-label (army|marines|airforce)"><\/span> [\d.]+%<\/div>$/;
-    if (safePattern.test(html.trim())) {
-      element.innerHTML = html;
-    } else {
-      element.textContent = html.replace(/<[^>]*>/g, '');
-    }
-  }
-}
-
 /* Normalize three percentages to sum exactly 100 using largest remainder */
 function normalizeTriple(a, m, f){
   a = clamp(Math.trunc(num(a)), 0, 100);
@@ -138,24 +103,23 @@ async function writeClipboard(text){
 
 /** ---------- Players UI ---------- **/
 function playerTemplate(i){
-  const sanitizedI = sanitizeInput(String(i));
   return `
-  <div class="player" id="player${sanitizedI}">
+  <div class="player" id="player${i}">
     <div class="flex-row" style="justify-content:space-between; gap:6px;">
-      <strong>Player ${sanitizedI}</strong>
-      <button class="secondary remove-player-btn" type="button" data-player-id="${sanitizedI}">Remove</button>
+      <strong>Player ${i}</strong>
+      <button class="secondary" type="button" onclick="removePlayer(${i})">Remove</button>
     </div>
     <div class="flex-row" style="margin-top:6px;">
-      <input type="text" class="name-input" id="name${sanitizedI}" placeholder="Player Name" maxlength="50" />
-      <label>Current Deployment:</label><input type="number" id="size${sanitizedI}" value="500000" min="0" max="10000000" inputmode="numeric" />
-      <span class="troop-label army">Army</span><input type="number" id="army${sanitizedI}" value="50" min="0" max="100" inputmode="numeric" />
-      <span class="troop-label marines">Marines</span><input type="number" id="marines${sanitizedI}" value="0" min="0" max="100" inputmode="numeric" />
-      <span class="troop-label airforce">Air Force</span><input type="number" id="airforce${sanitizedI}" value="50" min="0" max="100" inputmode="numeric" />
+      <input type="text" class="name-input" id="name${i}" placeholder="Player Name" />
+      <label>Current Deployment:</label><input type="number" id="size${i}" value="500000" min="0" inputmode="numeric" />
+      <span class="troop-label army">Army</span><input type="number" id="army${i}" value="50" min="0" max="100" inputmode="numeric" />
+      <span class="troop-label marines">Marines</span><input type="number" id="marines${i}" value="0" min="0" max="100" inputmode="numeric" />
+      <span class="troop-label airforce">Air Force</span><input type="number" id="airforce${i}" value="50" min="0" max="100" inputmode="numeric" />
     </div>
-    <div class="troop-count" id="count${sanitizedI}" aria-live="polite"></div>
+    <div class="troop-count" id="count${i}" aria-live="polite"></div>
     <div style="position:relative; display:inline-block;">
-      <button type="button" class="copy-player-btn" data-player-id="${sanitizedI}">Copy</button>
-      <span id="tooltip${sanitizedI}" class="tooltip">Copied!</span>
+      <button type="button" onclick="copyPlayer(${i})">Copy</button>
+      <span id="tooltip${i}" class="tooltip">Copied!</span>
     </div>
   </div>`;
 }
@@ -239,15 +203,13 @@ function calculate(){
   const marinesPct  = (marinesTotal / TOTAL_DEPLOYMENT) * 100;
   const airforcePct = (airforceTotal / TOTAL_DEPLOYMENT) * 100;
 
-  // Security: Use safe HTML setting
-  const resultHTML = `
+  els.result.innerHTML = `
     <p>New Alliance Ratio:</p>
     <div><span class="troop-label army">Army</span> ${armyPct.toFixed(2)}%</div>
     <div><span class="troop-label marines">Marines</span> ${marinesPct.toFixed(2)}%</div>
     <div><span class="troop-label airforce">Air Force</span> ${airforcePct.toFixed(2)}%</div>
     <p class="small">Totals always sum to 100% and per-player counts sum exactly to the player's size.</p>
   `;
-  setInnerHTML(els.result, resultHTML);
 
   // Update chart (original vs new)
   setBar(els.bars.armyOrig, init.a, true);
@@ -283,9 +245,9 @@ function calculateNeeded(){
     <div><span class="troop-label marines">Marines</span>: ${alloc.m.toLocaleString()}</div>
     <div><span class="troop-label airforce">Air Force</span>: ${alloc.f.toLocaleString()}</div>
     <br>
-    <button type="button" id="copyNeededBtn" data-army="${alloc.a}" data-marines="${alloc.m}" data-airforce="${alloc.f}">Copy Needed</button>
+    <button type="button" onclick="copyNeeded(${alloc.a}, ${alloc.m}, ${alloc.f})">Copy Needed</button>
   `;
-  setInnerHTML(els.neededResult, html);
+  els.neededResult.innerHTML = html;
 }
 
 async function copyNeeded(a, m, f){
@@ -355,32 +317,24 @@ async function dbGet(key) {
 // Save and load app state
 async function saveState() {
   const state = {
-    initArmy: clamp(num(els.initArmy.value), 0, 100),
-    initMarines: clamp(num(els.initMarines.value), 0, 100),
-    initAirforce: clamp(num(els.initAirforce.value), 0, 100),
-    currentTotal: clamp(num(els.currentTotal.value), 0, 10000000),
+    initArmy: els.initArmy.value,
+    initMarines: els.initMarines.value,
+    initAirforce: els.initAirforce.value,
+    currentTotal: els.currentTotal.value,
     players: []
   };
   
-  // Save player data with validation
+  // Save player data
   const players = document.querySelectorAll('.player');
   players.forEach(p => {
     const i = p.id.replace('player', '');
-    const nameEl = document.getElementById('name' + i);
-    const sizeEl = document.getElementById('size' + i);
-    const armyEl = document.getElementById('army' + i);
-    const marinesEl = document.getElementById('marines' + i);
-    const airforceEl = document.getElementById('airforce' + i);
-    
-    if (nameEl && sizeEl && armyEl && marinesEl && airforceEl) {
-      state.players.push({
-        name: sanitizeInput(nameEl.value).substring(0, 50), // Limit to 50 chars
-        size: clamp(num(sizeEl.value), 0, 10000000),
-        army: clamp(num(armyEl.value), 0, 100),
-        marines: clamp(num(marinesEl.value), 0, 100),
-        airforce: clamp(num(airforceEl.value), 0, 100)
-      });
-    }
+    state.players.push({
+      name: document.getElementById('name' + i).value,
+      size: document.getElementById('size' + i).value,
+      army: document.getElementById('army' + i).value,
+      marines: document.getElementById('marines' + i).value,
+      airforce: document.getElementById('airforce' + i).value
+    });
   });
   
   await dbSet('appState', state);
@@ -389,36 +343,28 @@ async function saveState() {
 async function loadState() {
   try {
     const state = await dbGet('appState');
-    if (!state || typeof state !== 'object') return;
+    if (!state) return;
     
-    // Restore initial values with validation
-    els.initArmy.value = clamp(num(state.initArmy), 0, 100) || 34;
-    els.initMarines.value = clamp(num(state.initMarines), 0, 100) || 33;
-    els.initAirforce.value = clamp(num(state.initAirforce), 0, 100) || 33;
-    els.currentTotal.value = clamp(num(state.currentTotal), 0, 10000000) || 6462500;
+    // Restore initial values
+    els.initArmy.value = state.initArmy || 34;
+    els.initMarines.value = state.initMarines || 33;
+    els.initAirforce.value = state.initAirforce || 33;
+    els.currentTotal.value = state.currentTotal || 6462500;
     
     // Clear existing players
     els.playersContainer.innerHTML = '';
     playerCount = 0;
     
-    // Restore players with validation
-    if (Array.isArray(state.players) && state.players.length > 0) {
-      state.players.slice(0, MAX_PLAYERS).forEach((player, index) => {
-        if (typeof player === 'object' && player !== null) {
-          addPlayer();
-          const i = index + 1;
-          const nameEl = document.getElementById('name' + i);
-          const sizeEl = document.getElementById('size' + i);
-          const armyEl = document.getElementById('army' + i);
-          const marinesEl = document.getElementById('marines' + i);
-          const airforceEl = document.getElementById('airforce' + i);
-          
-          if (nameEl) nameEl.value = sanitizeInput(String(player.name || '')).substring(0, 50);
-          if (sizeEl) sizeEl.value = clamp(num(player.size), 0, 10000000) || 500000;
-          if (armyEl) armyEl.value = clamp(num(player.army), 0, 100) || 50;
-          if (marinesEl) marinesEl.value = clamp(num(player.marines), 0, 100) || 0;
-          if (airforceEl) airforceEl.value = clamp(num(player.airforce), 0, 100) || 50;
-        }
+    // Restore players
+    if (state.players && state.players.length > 0) {
+      state.players.forEach((player, index) => {
+        addPlayer();
+        const i = index + 1;
+        document.getElementById('name' + i).value = player.name || '';
+        document.getElementById('size' + i).value = player.size || 500000;
+        document.getElementById('army' + i).value = player.army || 50;
+        document.getElementById('marines' + i).value = player.marines || 0;
+        document.getElementById('airforce' + i).value = player.airforce || 50;
       });
     } else {
       // Add default player if none saved
@@ -471,50 +417,6 @@ function setupAutoSave() {
   };
 }
 
-/** ---------- Event Listeners ---------- **/
-function setupEventListeners() {
-  // Main buttons
-  document.getElementById('addBtn').addEventListener('click', addPlayer);
-  document.getElementById('removeBtn').addEventListener('click', removeLastPlayer);
-  document.getElementById('calculateBtn').addEventListener('click', calculate);
-  document.getElementById('resetBtn').addEventListener('click', resetBars);
-  document.getElementById('calculateNeededBtn').addEventListener('click', calculateNeeded);
-  
-  // Input listeners
-  ['initArmy','initMarines','initAirforce'].forEach(id=>{
-    const el = document.getElementById(id);
-    if (el) {
-      el.addEventListener('input', ()=> readInitNormalized());
-    }
-  });
-  
-  // Delegated event listeners for dynamic content
-  document.addEventListener('click', function(e) {
-    if (e.target.classList.contains('remove-player-btn')) {
-      const playerId = e.target.getAttribute('data-player-id');
-      if (playerId) {
-        removePlayer(parseInt(playerId));
-      }
-    }
-    
-    if (e.target.classList.contains('copy-player-btn')) {
-      const playerId = e.target.getAttribute('data-player-id');
-      if (playerId) {
-        copyPlayer(parseInt(playerId));
-      }
-    }
-    
-    if (e.target.id === 'copyNeededBtn') {
-      const army = parseInt(e.target.getAttribute('data-army'));
-      const marines = parseInt(e.target.getAttribute('data-marines'));
-      const airforce = parseInt(e.target.getAttribute('data-airforce'));
-      if (!isNaN(army) && !isNaN(marines) && !isNaN(airforce)) {
-        copyNeeded(army, marines, airforce);
-      }
-    }
-  });
-}
-
 /** ---------- Wire up ---------- **/
 document.addEventListener('DOMContentLoaded', async function() {
   // Request persistent storage
@@ -526,8 +428,10 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Setup auto-save
   setupAutoSave();
   
-  // Setup event listeners
-  setupEventListeners();
+  // Wire up input listeners
+  ['initArmy','initMarines','initAirforce'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', ()=> readInitNormalized());
+  });
   
   // First normalize/display
   readInitNormalized();

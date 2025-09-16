@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -38,8 +38,8 @@
   <div class="flex-row" style="justify-content:space-between; gap:10px;">
     <h2>Swapped Players</h2>
     <div class="flex-row" style="gap:6px;">
-      <button id="addBtn">Add Player Swap</button>
-      <button class="secondary" id="removeBtn" disabled>Remove Last</button>
+      <button id="addBtn" onclick="addPlayer()">Add Player Swap</button>
+      <button class="secondary" onclick="removeLastPlayer()" id="removeBtn" disabled>Remove Last</button>
     </div>
   </div>
   <div id="playersContainer"></div>
@@ -50,7 +50,7 @@
   <div class="flex-row">
     <label for="currentTotal">Current Total Deployed:</label>
     <input type="number" id="currentTotal" value="6462500" min="0" inputmode="numeric" />
-    <button id="calculateNeededBtn">Calculate Needed</button>
+    <button onclick="calculateNeeded()">Calculate Needed</button>
   </div>
   <div id="neededResult" style="margin-top:8px; position: relative;">
     <span id="neededTooltip" class="tooltip">Copied!</span>
@@ -59,8 +59,8 @@
 </div>
 
 <div class="flex-row" style="gap:8px; margin-bottom:8px;">
-  <button id="calculateBtn">Calculate New Ratio</button>
-  <button class="secondary" id="resetBtn">Clear Chart</button>
+  <button onclick="calculate()">Calculate New Ratio</button>
+  <button class="secondary" onclick="resetBars()">Clear Chart</button>
 </div>
 
 <div class="section result" id="result" aria-live="polite"></div>
