@@ -137,6 +137,21 @@
       background: #6b7280;
     }
 
+    .add-button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 12px;
+      transition: background 0.3s;
+    }
+
+    .add-button:hover {
+      background: #059669;
+    }
+
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
@@ -269,8 +284,17 @@
         <label for="battleDate">Date:</label>
         <input type="date" id="battleDate" />
       </div>
-    </div>
-
+      <div class="input-group">
+        <label for="battleAgainst">Against:</label>
+        <div class="input-with-button">
+          <select id="battleAgainst" onchange="handleEnemySelection()">
+            <option value="">Select enemy or add new...</option>
+          </select>
+          <button type="button" onclick="addNewEnemy()" class="add-button">+ Add New</button>
+        </div>
+      </div>
+          </div>
+          
     <div class="section">
       <h3>Troops Sent (From Calculator)</h3>
       <div class="troop-grid">
@@ -288,14 +312,49 @@
           </div>
           <div class="label">Troops Sent:</div>
           <input type="number" id="marinesSent" placeholder="0" min="0" />
-        </div>
-
+          </div>
+          
         <div class="troop-card">
           <div class="troop-header">
             <h4>✈️ Air Force</h4>
           </div>
           <div class="label">Troops Sent:</div>
           <input type="number" id="airforceSent" placeholder="0" min="0" />
+        </div>
+      </div>
+          </div>
+          
+    <div class="section">
+      <h3>Enemy Troops</h3>
+      <div class="input-group">
+        <label>
+          <input type="checkbox" id="enemyFromCalculator" onchange="toggleEnemyTroopsSource()" />
+          Enemy troops sent from calculator
+        </label>
+      </div>
+      <div class="troop-grid">
+        <div class="troop-card">
+          <div class="troop-header">
+            <h4>🪖 Enemy Army</h4>
+          </div>
+          <div class="label">Enemy Troops:</div>
+          <input type="number" id="enemyArmySent" placeholder="0" min="0" />
+        </div>
+
+        <div class="troop-card">
+          <div class="troop-header">
+            <h4>⚓ Enemy Marines</h4>
+          </div>
+          <div class="label">Enemy Troops:</div>
+          <input type="number" id="enemyMarinesSent" placeholder="0" min="0" />
+          </div>
+          
+        <div class="troop-card">
+          <div class="troop-header">
+            <h4>✈️ Enemy Air Force</h4>
+          </div>
+          <div class="label">Enemy Troops:</div>
+          <input type="number" id="enemyAirforceSent" placeholder="0" min="0" />
         </div>
       </div>
     </div>
@@ -353,6 +412,7 @@
       <button onclick="editBattle()" class="secondary">✏️ Edit</button>
       <button onclick="saveBattle()" class="success">💾 Save Battle Results</button>
       <button onclick="exportToCSV()" class="secondary">📊 Export to CSV</button>
+      <button onclick="showEnemyAnalytics()" class="secondary">⚔️ Enemy Analytics</button>
       <button onclick="goToTroopSwap()" class="secondary">🔄 Troop Swap Calculator</button>
       <button onclick="clearForm()" class="secondary">🗑️ Clear Form</button>
       <button onclick="loadFromCalculator()" class="secondary">📋 Load from Calculator</button>
@@ -440,14 +500,33 @@
       document.getElementById('resultsDisplay').style.display = 'block';
     }
 
+    function generateBattleName() {
+      const date = new Date();
+      const dateStr = date.toLocaleDateString();
+      const timeStr = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+      
+      // Get total troops sent for context
+      const armySent = parseInt(document.getElementById('armySent').value) || 0;
+      const marinesSent = parseInt(document.getElementById('marinesSent').value) || 0;
+      const airforceSent = parseInt(document.getElementById('airforceSent').value) || 0;
+      const totalSent = armySent + marinesSent + airforceSent;
+      
+      if (totalSent > 0) {
+        return `Battle ${dateStr} ${timeStr} (${totalSent.toLocaleString()} troops)`;
+      } else {
+        return `Battle ${dateStr} ${timeStr}`;
+      }
+    }
+
     function saveBattle() {
       // Get calculator context if available
       const calculatorData = JSON.parse(localStorage.getItem('lastCalculatorData') || '{}');
       
       const battleData = {
-        id: Date.now(),
-        name: document.getElementById('battleName').value || 'Unnamed Battle',
+      id: Date.now(),
+        name: document.getElementById('battleName').value || generateBattleName(),
         date: document.getElementById('battleDate').value,
+        against: document.getElementById('battleAgainst').value || 'Unknown Enemy',
         troopsSent: {
           army: parseInt(document.getElementById('armySent').value) || 0,
           marines: parseInt(document.getElementById('marinesSent').value) || 0,
@@ -463,6 +542,12 @@
           marines: parseInt(document.getElementById('marinesSurvived').value) || 0,
           airforce: parseInt(document.getElementById('airforceSurvived').value) || 0
         },
+        enemyTroops: {
+          army: parseInt(document.getElementById('enemyArmySent').value) || 0,
+          marines: parseInt(document.getElementById('enemyMarinesSent').value) || 0,
+          airforce: parseInt(document.getElementById('enemyAirforceSent').value) || 0
+        },
+        enemyFromCalculator: document.getElementById('enemyFromCalculator').checked,
         outcome: document.getElementById('battleOutcome').value,
         notes: document.getElementById('battleNotes').value,
         // Calculator input context
@@ -477,16 +562,16 @@
 
       // Get existing history
       let history = JSON.parse(localStorage.getItem('battleHistory') || '[]');
-      
-      // Add new battle
+    
+    // Add new battle
       history.unshift(battleData);
       
       // Keep only last 50 battles
       if (history.length > 50) {
         history = history.slice(0, 50);
       }
-      
-      // Save to localStorage
+    
+    // Save to localStorage
       localStorage.setItem('battleHistory', JSON.stringify(history));
       
       // Refresh history display
@@ -501,6 +586,9 @@
         button.textContent = originalText;
         button.classList.remove('success');
       }, 2000);
+      
+      // Notify control point page of new battle data for counter strategy updates
+      notifyCounterStrategyUpdate(battleData);
     }
 
     function displayHistory() {
@@ -509,15 +597,16 @@
       
       if (history.length === 0) {
         historyContainer.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 20px;">No battle history yet. Save your first battle to see it here!</p>';
-        return;
-      }
-
+      return;
+    }
+    
       historyContainer.innerHTML = history.map(battle => `
         <div class="history-item">
           <div class="history-header">
             <h4>${battle.name}</h4>
             <span class="history-date">${new Date(battle.date).toLocaleDateString()}</span>
           </div>
+          ${battle.against ? `<div class="history-enemy" style="color: #fbbf24; font-weight: bold; margin-bottom: 8px;">⚔️ Against: ${battle.against}</div>` : ''}
           <div class="history-stats">
             <div class="stat-item">
               <div class="stat-label">Outcome</div>
@@ -530,19 +619,19 @@
             <div class="stat-item">
               <div class="stat-label">Total Lost</div>
               <div class="stat-value">${(battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce).toLocaleString()}</div>
-            </div>
+          </div>
             <div class="stat-item">
               <div class="stat-label">Loss Rate</div>
               <div class="stat-value">${battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce > 0 ? 
                 (((battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce) / 
                   (battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce)) * 100).toFixed(1) : 0}%</div>
-            </div>
+          </div>
           </div>
           ${battle.notes ? `<p style="margin-top: 10px; color: #9ca3af; font-style: italic;">"${battle.notes}"</p>` : ''}
-        </div>
-      `).join('');
-    }
-
+      </div>
+    `).join('');
+  }
+  
     function getOutcomeEmoji(outcome) {
       switch(outcome) {
         case 'victory': return '🏆';
@@ -555,6 +644,7 @@
     function clearForm() {
       document.getElementById('battleName').value = '';
       document.getElementById('battleDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('battleAgainst').value = '';
       document.getElementById('armySent').value = '';
       document.getElementById('marinesSent').value = '';
       document.getElementById('airforceSent').value = '';
@@ -564,6 +654,10 @@
       document.getElementById('armySurvived').value = '';
       document.getElementById('marinesSurvived').value = '';
       document.getElementById('airforceSurvived').value = '';
+      document.getElementById('enemyArmySent').value = '';
+      document.getElementById('enemyMarinesSent').value = '';
+      document.getElementById('enemyAirforceSent').value = '';
+      document.getElementById('enemyFromCalculator').checked = false;
       document.getElementById('battleOutcome').value = 'victory';
       document.getElementById('battleNotes').value = '';
       document.getElementById('resultsDisplay').style.display = 'none';
@@ -574,6 +668,33 @@
         localStorage.removeItem('battleHistory');
         displayHistory();
       }
+    }
+    
+    // Notify other pages of new battle data for counter strategy updates
+    function notifyCounterStrategyUpdate(battleData) {
+      // Store a flag that new battle data is available
+      localStorage.setItem('counterStrategyUpdateNeeded', JSON.stringify({
+        timestamp: Date.now(),
+        battleId: battleData.id,
+        enemyComposition: {
+          army: battleData.enemyTroops.army,
+          marines: battleData.enemyTroops.marines,
+          airforce: battleData.enemyTroops.airforce
+        },
+        outcome: battleData.outcome,
+        lossRate: calculateLossRate(battleData)
+      }));
+      
+      // Dispatch custom event for real-time updates if control point page is open
+      window.dispatchEvent(new CustomEvent('battleDataUpdated', {
+        detail: battleData
+      }));
+    }
+    
+    function calculateLossRate(battle) {
+      const totalSent = battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce;
+      const totalLost = battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce;
+      return totalSent > 0 ? (totalLost / totalSent) * 100 : 0;
     }
 
     function editBattle() {
@@ -651,6 +772,7 @@
       const headers = [
         'Battle Name',
         'Date',
+        'Against',
         // Calculator Input Data
         'Calculator: Troops to Use',
         'Calculator: Army %',
@@ -671,6 +793,11 @@
         'Air Force Survived',
         'Total Survived',
         'Loss Rate (%)',
+        'Enemy Army',
+        'Enemy Marines',
+        'Enemy Air Force',
+        'Total Enemy Troops',
+        'Enemy From Calculator',
         'Outcome',
         'Notes'
       ];
@@ -688,6 +815,7 @@
         return [
           `"${battle.name}"`,
           battle.date,
+          `"${battle.against || 'Unknown Enemy'}"`,
           // Calculator Input Data
           calcInput.troopsToUse || '',
           calcInput.armyPercentage || '',
@@ -708,6 +836,11 @@
           battle.troopsSurvived.airforce,
           totalSurvived,
           lossRate,
+          battle.enemyTroops?.army || 0,
+          battle.enemyTroops?.marines || 0,
+          battle.enemyTroops?.airforce || 0,
+          (battle.enemyTroops?.army || 0) + (battle.enemyTroops?.marines || 0) + (battle.enemyTroops?.airforce || 0),
+          battle.enemyFromCalculator ? 'Yes' : 'No',
           battle.outcome,
           `"${battle.notes || ''}"`
         ];
@@ -763,9 +896,166 @@
       }
     }
 
+    function toggleEnemyTroopsSource() {
+      const checkbox = document.getElementById('enemyFromCalculator');
+      const enemyInputs = ['enemyArmySent', 'enemyMarinesSent', 'enemyAirforceSent'];
+      
+      if (checkbox.checked) {
+        // Load enemy troops from calculator data
+        const calculatorData = JSON.parse(localStorage.getItem('lastCalculatorData') || '{}');
+        
+        // For now, we'll use placeholder values since we don't have enemy data from calculator
+        // In a real implementation, this would come from the enemy force distribution section
+        document.getElementById('enemyArmySent').value = calculatorData.enemyArmy || 0;
+        document.getElementById('enemyMarinesSent').value = calculatorData.enemyMarines || 0;
+        document.getElementById('enemyAirforceSent').value = calculatorData.enemyAirforce || 0;
+        
+        // Disable manual input
+        enemyInputs.forEach(id => {
+          document.getElementById(id).disabled = true;
+        });
+      } else {
+        // Enable manual input and clear values
+        enemyInputs.forEach(id => {
+          document.getElementById(id).disabled = false;
+          document.getElementById(id).value = '';
+        });
+      }
+    }
+
+    function loadKnownEnemies() {
+      const knownEnemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
+      const select = document.getElementById('battleAgainst');
+      
+      // Clear existing options except the first one
+      select.innerHTML = '<option value="">Select enemy or add new...</option>';
+      
+      // Add known enemies to dropdown
+      knownEnemies.forEach(enemy => {
+        const option = document.createElement('option');
+        option.value = enemy.name;
+        option.textContent = enemy.name;
+        select.appendChild(option);
+      });
+    }
+
+    function handleEnemySelection() {
+      const selectedEnemy = document.getElementById('battleAgainst').value;
+      if (selectedEnemy) {
+        // Load enemy data and auto-populate enemy troops if available
+        const knownEnemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
+        const enemy = knownEnemies.find(e => e.name === selectedEnemy);
+        
+        if (enemy) {
+          // Auto-populate enemy troops from known enemy data
+          const totalArmy = (enemy.troops.army.t1 || 0) + (enemy.troops.army.t2 || 0) + (enemy.troops.army.t3 || 0) + (enemy.troops.army.t4 || 0);
+          const totalMarines = (enemy.troops.commandos.t1 || 0) + (enemy.troops.commandos.t2 || 0) + (enemy.troops.commandos.t3 || 0) + (enemy.troops.commandos.t4 || 0);
+          const totalAirforce = (enemy.troops.airforce.t1 || 0) + (enemy.troops.airforce.t2 || 0) + (enemy.troops.airforce.t3 || 0) + (enemy.troops.airforce.t4 || 0);
+          
+          document.getElementById('enemyArmySent').value = totalArmy;
+          document.getElementById('enemyMarinesSent').value = totalMarines;
+          document.getElementById('enemyAirforceSent').value = totalAirforce;
+          
+          // Check the "from calculator" checkbox since we're using known data
+          document.getElementById('enemyFromCalculator').checked = true;
+          toggleEnemyTroopsSource();
+        }
+      }
+    }
+
+    function addNewEnemy() {
+      const enemyName = prompt('Enter new enemy name:');
+      if (enemyName && enemyName.trim()) {
+        const select = document.getElementById('battleAgainst');
+        const option = document.createElement('option');
+        option.value = enemyName.trim();
+        option.textContent = enemyName.trim();
+        option.selected = true;
+        select.appendChild(option);
+        
+        // Clear enemy troops since this is a new enemy
+        document.getElementById('enemyArmySent').value = '';
+        document.getElementById('enemyMarinesSent').value = '';
+        document.getElementById('enemyAirforceSent').value = '';
+        document.getElementById('enemyFromCalculator').checked = false;
+        toggleEnemyTroopsSource();
+      }
+    }
+
+    function showEnemyAnalytics() {
+      const history = JSON.parse(localStorage.getItem('battleHistory') || '[]');
+      const knownEnemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
+      
+      if (history.length === 0) {
+        alert('No battle history available for analytics.');
+        return;
+      }
+      
+      // Group battles by enemy
+      const enemyStats = {};
+      history.forEach(battle => {
+        const enemyName = battle.against || 'Unknown Enemy';
+        if (!enemyStats[enemyName]) {
+          enemyStats[enemyName] = {
+            name: enemyName,
+            battles: [],
+            victories: 0,
+            defeats: 0,
+            draws: 0,
+            totalSent: 0,
+            totalLost: 0,
+            avgLossRate: 0
+          };
+        }
+        
+        enemyStats[enemyName].battles.push(battle);
+        if (battle.outcome === 'victory') enemyStats[enemyName].victories++;
+        else if (battle.outcome === 'defeat') enemyStats[enemyName].defeats++;
+        else enemyStats[enemyName].draws++;
+        
+        const totalSent = battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce;
+        const totalLost = battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce;
+        enemyStats[enemyName].totalSent += totalSent;
+        enemyStats[enemyName].totalLost += totalLost;
+      });
+      
+      // Calculate average loss rates
+      Object.values(enemyStats).forEach(stats => {
+        stats.avgLossRate = stats.totalSent > 0 ? (stats.totalLost / stats.totalSent * 100).toFixed(1) : 0;
+      });
+      
+      // Create analytics display
+      let analyticsHTML = '<div style="background: #1f2937; padding: 20px; border-radius: 10px; margin: 20px 0;">';
+      analyticsHTML += '<h3 style="color: #fbbf24; margin-top: 0;">📊 Enemy Performance Analytics</h3>';
+      
+      Object.values(enemyStats).forEach(stats => {
+        const winRate = stats.battles.length > 0 ? (stats.victories / stats.battles.length * 100).toFixed(1) : 0;
+        const isKnownEnemy = knownEnemies.some(e => e.name === stats.name);
+        
+        analyticsHTML += `<div style="background: #374151; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid ${isKnownEnemy ? '#10b981' : '#6b7280'};">`;
+        analyticsHTML += `<h4 style="color: #fbbf24; margin-top: 0;">${stats.name} ${isKnownEnemy ? '📋' : ''}</h4>`;
+        analyticsHTML += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; color: #d1d5db;">`;
+        analyticsHTML += `<div><strong>Battles:</strong> ${stats.battles.length}</div>`;
+        analyticsHTML += `<div><strong>Win Rate:</strong> ${winRate}%</div>`;
+        analyticsHTML += `<div><strong>Victories:</strong> ${stats.victories}</div>`;
+        analyticsHTML += `<div><strong>Defeats:</strong> ${stats.defeats}</div>`;
+        analyticsHTML += `<div><strong>Draws:</strong> ${stats.draws}</div>`;
+        analyticsHTML += `<div><strong>Avg Loss Rate:</strong> ${stats.avgLossRate}%</div>`;
+        analyticsHTML += `</div></div>`;
+      });
+      
+      analyticsHTML += '</div>';
+      
+      // Show in a modal or replace history display
+      const historyContainer = document.getElementById('battleHistory');
+      const originalContent = historyContainer.innerHTML;
+      historyContainer.innerHTML = analyticsHTML + '<button onclick="displayHistory()" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 10px 0;">← Back to Battle History</button>';
+    }
+
     // Load history and auto-load calculator data on page load
     displayHistory();
     autoLoadCalculatorData();
-  </script>
+    loadKnownEnemies();
+</script>
 </body>
 </html>

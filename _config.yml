@@ -1,0 +1,72 @@
+# GitHub Pages Configuration for Troop Tools PWA
+
+# Site settings
+title: "Troop Tools - Military Calculator Suite"
+description: "Comprehensive military force calculator suite for troop management, battle analysis, and strategic planning. Works offline with full PWA support."
+url: "https://yourusername.github.io"
+baseurl: "/Zil"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+theme: minima
+
+# PWA settings
+plugins:
+  - jekyll-sitemap
+  - jekyll-feed
+
+# Exclude files from processing
+exclude:
+  - README.md
+  - Gemfile
+  - Gemfile.lock
+  - node_modules
+  - vendor
+  - .git
+  - .gitignore
+  - .htaccess
+
+# Include files
+include:
+  - _redirects
+
+# Collections
+collections:
+  tools:
+    output: true
+    permalink: /:name/
+
+# Defaults
+defaults:
+  - scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "default"
+  - scope:
+      path: ""
+      type: "tools"
+    values:
+      layout: "tool"
+
+# Sass settings
+sass:
+  sass_dir: _sass
+  style: compressed
+
+# Performance settings
+compress_html:
+  clippings: all
+  comments: all
+  endings: all
+  startings: [html, head, body]
+  blanklines: false
+  profile: false
+  ignore:
+    envs: [development]
+
+# Security settings
+safe: true
+lsi: false
+incremental: false

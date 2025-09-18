@@ -243,23 +243,9 @@
     <h1>🎖️ Military Force Calculator</h1>
 
     <div class="section">
-      <div class="input-group">
-        <label for="troopsToUse">Amount to subtract from 6,462,500:</label>
-        <div class="input-with-button">
-          <input
-            type="number"
-            id="troopsToUse"
-            placeholder="e.g., 5462500"
-            max="6462500"
-            min="0"
-            inputmode="numeric"
-            aria-describedby="remainingDisplay"
-          />
-          <button class="copy-button" id="copyBtn" type="button" onclick="copyResults()">📋 Copy</button>
-        </div>
-      </div>
       <div class="remaining-display" id="remainingDisplay" aria-live="polite">
         Available for distribution: 6,462,500 troops
+        <button id="editAvailableBtn" style="background: #6b7280; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 10px;">Edit</button>
       </div>
     </div>
 
@@ -268,57 +254,126 @@
 
       <div class="troop-grid">
         <div class="troop-card">
-          <div class="troop-header">
+        <div class="troop-header">
             <input type="checkbox" id="armyToggle" checked aria-labelledby="armyLabel"/>
             <label id="armyLabel" for="armyToggle"><h4>🪖 Army</h4></label>
-          </div>
-          <div class="percentage-row">
+        </div>
+        <div class="percentage-row">
             <label for="armyPercentage" class="sr-only" style="position:absolute;left:-9999px;">Army percentage</label>
             <input type="number" id="armyPercentage" value="40" min="0" max="100" inputmode="numeric" />
-            <span>%</span>
-          </div>
-          <div class="troop-result" id="armyResult" role="button" tabindex="0" onclick="copyTroopCount('army')" onkeypress="if(event.key==='Enter'){copyTroopCount('army')}">0 troops</div>
+          <span>%</span>
         </div>
+          <div class="input-group" style="margin-top: 8px;">
+            <label for="armyCount" style="font-size: 0.85em; color: #ccc;">Troop Count:</label>
+            <input type="number" id="armyCount" value="0" min="0" inputmode="numeric" style="width: 100%; margin-top: 4px;" />
+        </div>
+          <div class="troop-result" id="armyResult" role="button" tabindex="0" onclick="copyTroopCount('army')" onkeypress="if(event.key==='Enter'){copyTroopCount('army')}">0 troops</div>
+      </div>
 
         <div class="troop-card">
-          <div class="troop-header">
+        <div class="troop-header">
             <input type="checkbox" id="marinesToggle" checked aria-labelledby="marinesLabel"/>
             <label id="marinesLabel" for="marinesToggle"><h4>⚓ Marines</h4></label>
-          </div>
-          <div class="percentage-row">
+        </div>
+        <div class="percentage-row">
             <label for="marinesPercentage" class="sr-only" style="position:absolute;left:-9999px;">Marines percentage</label>
             <input type="number" id="marinesPercentage" value="30" min="0" max="100" inputmode="numeric" />
-            <span>%</span>
-          </div>
-          <div class="troop-result" id="marinesResult" role="button" tabindex="0" onclick="copyTroopCount('marines')" onkeypress="if(event.key==='Enter'){copyTroopCount('marines')}">0 troops</div>
+          <span>%</span>
         </div>
+          <div class="input-group" style="margin-top: 8px;">
+            <label for="marinesCount" style="font-size: 0.85em; color: #ccc;">Troop Count:</label>
+            <input type="number" id="marinesCount" value="0" min="0" inputmode="numeric" style="width: 100%; margin-top: 4px;" />
+        </div>
+          <div class="troop-result" id="marinesResult" role="button" tabindex="0" onclick="copyTroopCount('marines')" onkeypress="if(event.key==='Enter'){copyTroopCount('marines')}">0 troops</div>
+      </div>
 
         <div class="troop-card">
-          <div class="troop-header">
+        <div class="troop-header">
             <input type="checkbox" id="airforceToggle" checked aria-labelledby="airforceLabel"/>
             <label id="airforceLabel" for="airforceToggle"><h4>✈️ Air Force</h4></label>
-          </div>
-          <div class="percentage-row">
+        </div>
+        <div class="percentage-row">
             <label for="airforcePercentage" class="sr-only" style="position:absolute;left:-9999px;">Air Force percentage</label>
             <input type="number" id="airforcePercentage" value="30" min="0" max="100" inputmode="numeric" />
-            <span>%</span>
-          </div>
-          <div class="troop-result" id="airforceResult" role="button" tabindex="0" onclick="copyTroopCount('airforce')" onkeypress="if(event.key==='Enter'){copyTroopCount('airforce')}">0 troops</div>
+          <span>%</span>
         </div>
+          <div class="input-group" style="margin-top: 8px;">
+            <label for="airforceCount" style="font-size: 0.85em; color: #ccc;">Troop Count:</label>
+            <input type="number" id="airforceCount" value="0" min="0" inputmode="numeric" style="width: 100%; margin-top: 4px;" />
+        </div>
+          <div class="troop-result" id="airforceResult" role="button" tabindex="0" onclick="copyTroopCount('airforce')" onkeypress="if(event.key==='Enter'){copyTroopCount('airforce')}">0 troops</div>
       </div>
+    </div>
 
       <div class="percentage-status" id="percentageTotal" aria-live="polite">
         Total: 100%
       </div>
     </div>
 
-    <div class="summary">
-      <h3>📊 Summary</h3>
-      <div class="summary-grid">
-        <div class="summary-row">
-          <span>Subtracted:</span>
-          <span id="subtractedAmount">0</span>
+    <div class="section">
+      <h3>Enemy Force Distribution</h3>
+      <p style="color: #ccc; margin-bottom: 15px;">Enter scout report data to analyze enemy force composition:</p>
+      
+      <div class="troop-grid">
+        <div class="troop-card">
+          <div class="troop-header">
+            <h4>🪖 Enemy Army</h4>
+    </div>
+    <div class="input-group">
+            <label for="enemyArmyCount">Troop Count:</label>
+            <input type="number" id="enemyArmyCount" value="0" min="0" inputmode="numeric" style="width: 100%;" />
+      </div>
+          <div class="troop-result" id="enemyArmyPercent">Percentage: 0%</div>
+    </div>
+
+        <div class="troop-card">
+          <div class="troop-header">
+            <h4>⚓ Enemy Marines</h4>
+          </div>
+          <div class="input-group">
+            <label for="enemyMarinesCount">Troop Count:</label>
+            <input type="number" id="enemyMarinesCount" value="0" min="0" inputmode="numeric" style="width: 100%;" />
+          </div>
+          <div class="troop-result" id="enemyMarinesPercent">Percentage: 0%</div>
+    </div>
+
+        <div class="troop-card">
+        <div class="troop-header">
+            <h4>✈️ Enemy Air Force</h4>
         </div>
+          <div class="input-group">
+            <label for="enemyAirforceCount">Troop Count:</label>
+            <input type="number" id="enemyAirforceCount" value="0" min="0" inputmode="numeric" style="width: 100%;" />
+        </div>
+          <div class="troop-result" id="enemyAirforcePercent">Percentage: 0%</div>
+        </div>
+      </div>
+
+      <div class="summary">
+            <h3>Enemy Summary</h3>
+        <div class="summary-grid">
+          <div class="summary-row">
+            <span>Total Enemy Troops:</span>
+            <span id="enemyTotalTroops">0</span>
+        </div>
+          <div class="summary-row">
+            <span>Enemy Deployment:</span>
+            <span id="enemyDeployment">0</span>
+        </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; margin-top: 20px;">
+             <button id="counterAttackBtn" style="background: #ef4444; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s;">
+               Generate Counter Strategy
+             </button>
+        <div id="counterResults" style="margin-top: 15px; padding: 15px; background: #1e3a8a; border: 1px solid #3b82f6; border-radius: 8px; display: none;"></div>
+      </div>
+    </div>
+
+    <div class="summary">
+      <h3>Summary</h3>
+      <div class="summary-grid">
         <div class="summary-row">
           <span>Distributed:</span>
           <span id="totalDeployed">0</span>
@@ -343,12 +398,11 @@
     </div>
 
     <div class="section">
-      <h3>⚔️ Battle Results</h3>
-      <p style="color: #ccc; margin-bottom: 15px;">Ready to hit the control point? Record your battle results and track troop losses.</p>
       <button onclick="goToBattleResults()" style="background: #ef4444; color: white; border: none; padding: 15px 25px; border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: bold; transition: background 0.3s;">
-        ⚔️ Record Battle Results
+        Record Battle Results
       </button>
     </div>
+
   </div>
 
   <script>
@@ -360,13 +414,10 @@
     ];
 
     const els = {
-      troopsToUse: document.getElementById("troopsToUse"),
       remainingDisplay: document.getElementById("remainingDisplay"),
       percentageTotal: document.getElementById("percentageTotal"),
-      subtractedAmount: document.getElementById("subtractedAmount"),
       totalDeployed: document.getElementById("totalDeployed"),
       remainingSummary: document.getElementById("remainingSummary"),
-      copyBtn: document.getElementById("copyBtn"),
     };
 
     function clamp(n, min, max) { return Math.min(max, Math.max(min, n)); }
@@ -374,6 +425,57 @@
       const v = document.getElementById(id).value.trim();
       const num = Number(v);
       return Number.isFinite(num) ? Math.trunc(num) : def;
+    }
+
+    // Available troops management
+    let availableTroops = MAX_TROOPS;
+
+    function getAvailableTroops() {
+      return availableTroops;
+    }
+
+    function setAvailableTroops(troops) {
+      availableTroops = clamp(troops, 0, MAX_TROOPS);
+    }
+
+    function showEditAvailableModal() {
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); z-index: 1000; display: flex;
+        align-items: center; justify-content: center;
+      `;
+      
+      modal.innerHTML = `
+        <div style="background: #1a1a2e; padding: 30px; border-radius: 15px; border: 1px solid #333; max-width: 400px; width: 90%;">
+          <h3 style="color: #64b5f6; margin-top: 0; text-align: center;">Edit Available Troops</h3>
+          
+          <div style="margin: 20px 0;">
+            <label style="color: #ccc; display: block; margin-bottom: 8px;">Available Troops:</label>
+            <input type="number" id="editAvailableInput" value="${availableTroops}" min="0" max="${MAX_TROOPS}" style="width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #555; background: #2a2a3e; color: white; text-align: center; font-size: 16px;">
+            <p style="color: #999; font-size: 0.85em; margin: 8px 0 0 0;">Maximum: ${MAX_TROOPS.toLocaleString()} troops</p>
+      </div>
+          
+          <div style="text-align: center;">
+            <button id="cancelEditAvailable" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-right: 10px;">Cancel</button>
+            <button id="applyEditAvailable" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">Apply</button>
+      </div>
+    </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Add event listeners
+      document.getElementById('cancelEditAvailable').addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+      
+      document.getElementById('applyEditAvailable').addEventListener('click', () => {
+        const newTroops = parseInt(document.getElementById('editAvailableInput').value) || 0;
+        setAvailableTroops(newTroops);
+        updateCalculations();
+        document.body.removeChild(modal);
+      });
     }
 
     function getBranchState() {
@@ -452,16 +554,11 @@
     }
 
     function updateCalculations({ autoNormalize = true } = {}) {
-      // Clamp troops input
-      const subRaw = readInt("troopsToUse", 0);
-      const validSubtraction = clamp(subRaw, 0, MAX_TROOPS);
-      if (subRaw !== validSubtraction) {
-        els.troopsToUse.value = String(validSubtraction);
-      }
-      const remainingTroops = MAX_TROOPS - validSubtraction;
+      // Use the current available troops (can be edited)
+      const remainingTroops = getAvailableTroops();
 
-      els.remainingDisplay.textContent =
-        `Available for distribution: ${remainingTroops.toLocaleString()} troops`;
+      els.remainingDisplay.innerHTML =
+        `Available for distribution: ${remainingTroops.toLocaleString()} troops <button id="editAvailableBtn" style="background: #6b7280; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 10px;">Edit</button>`;
 
       let states = getBranchState();
       if (autoNormalize) states = normalizePercentages(states);
@@ -472,8 +569,7 @@
       els.percentageTotal.textContent = `Total: ${totalPct}%` + (totalPct !== 100 ? " (automatically normalized)" : "");
       els.percentageTotal.className = `percentage-status ${totalPct === 100 ? "percentage-valid" : "percentage-invalid"}`;
 
-      // Enable copy only if at least one branch is active
-      els.copyBtn.disabled = (states.filter(s => s.active).length === 0);
+      // Copy functionality removed - no longer needed
 
       // Allocation
       const allocations = preciseAllocate(remainingTroops, states);
@@ -494,7 +590,6 @@
       const unassigned = remainingTroops - distributed;
 
       // Summary
-      els.subtractedAmount.textContent = validSubtraction.toLocaleString();
       els.totalDeployed.textContent = distributed.toLocaleString();
       document.getElementById("armySummary").textContent = allocations.get("army").toLocaleString();
       document.getElementById("marinesSummary").textContent = allocations.get("marines").toLocaleString();
@@ -550,24 +645,7 @@
       setTimeout(() => { el.classList.remove("copied"); el.textContent = original; }, 1500);
     }
 
-    async function copyResults() {
-      updateCalculations();
-      const parts = BRANCHES
-        .filter(b => document.getElementById(b.key + "Toggle").checked)
-        .map(b => `${b.label}: ${document.getElementById(b.key + "Result").textContent.replace(" troops","")}`);
-      const ok = await writeClipboard(parts.join("\n"));
-      const btn = els.copyBtn;
-      btn.classList.add("success");
-      btn.textContent = ok ? "✓ Copied" : "⚠️ Copy failed";
-      setTimeout(() => { btn.classList.remove("success"); btn.textContent = "📋 Copy"; }, 2000);
-    }
-
-    // Event listeners
-    els.troopsToUse.addEventListener("input", () => updateCalculations());
-    BRANCHES.forEach(({ key }) => {
-      document.getElementById(key + "Toggle").addEventListener("change", () => { autoAdjustPercentages(); updateCalculations(); });
-      document.getElementById(key + "Percentage").addEventListener("input", () => updateCalculations());
-    });
+    // Copy functionality removed - no longer needed
 
     // Battle Results Navigation
     function goToBattleResults() {
@@ -577,11 +655,10 @@
         marines: parseInt(document.getElementById("marinesResult").textContent.replace(/[^\d]/g, '')) || 0,
         airforce: parseInt(document.getElementById("airforceResult").textContent.replace(/[^\d]/g, '')) || 0,
         // Additional calculator context
-        troopsToUse: parseInt(els.troopsToUse.value) || 0,
         armyPercentage: parseInt(document.getElementById("armyPercentage").value) || 0,
         marinesPercentage: parseInt(document.getElementById("marinesPercentage").value) || 0,
         airforcePercentage: parseInt(document.getElementById("airforcePercentage").value) || 0,
-        remainingTroops: MAX_TROOPS - (parseInt(els.troopsToUse.value) || 0),
+        availableTroops: getAvailableTroops(),
         timestamp: Date.now()
       };
       
@@ -591,8 +668,743 @@
       window.location.href = 'battle_results.html';
     }
 
+    // Event listeners
+    BRANCHES.forEach(({ key }) => {
+      document.getElementById(key + "Toggle").addEventListener("change", () => { autoAdjustPercentages(); updateCalculations(); });
+      document.getElementById(key + "Percentage").addEventListener("input", () => {
+        autoCalculateTroopCounts();
+        updateCalculations();
+      });
+    });
+
+    // Add event listener for edit available troops button
+    document.addEventListener('click', (e) => {
+      if (e.target && e.target.id === 'editAvailableBtn') {
+        showEditAvailableModal();
+      }
+    });
+
+
+    // Enemy Force Distribution Functions
+    function setupEnemyForceDistribution() {
+      const enemyInputs = ['enemyArmyCount', 'enemyMarinesCount', 'enemyAirforceCount'];
+      
+      console.log('Setting up enemy force distribution...');
+      
+      enemyInputs.forEach(id => {
+        const input = document.getElementById(id);
+        console.log(`Looking for element: ${id}`, input);
+        if (input) {
+          input.addEventListener('input', calculateEnemyDistribution);
+          input.addEventListener('change', calculateEnemyDistribution);
+          console.log(`Added event listeners to ${id}`);
+        } else {
+          console.log(`Element ${id} not found!`);
+        }
+      });
+      
+      const counterBtn = document.getElementById('counterAttackBtn');
+      console.log('Counter button:', counterBtn);
+      if (counterBtn) {
+        counterBtn.addEventListener('click', generateCounterStrategy);
+        console.log('Added click listener to counter button');
+      }
+      
+      // Initial calculation
+      calculateEnemyDistribution();
+    }
+
+    function calculateEnemyDistribution() {
+      // Get input values directly
+      const armyInput = document.getElementById('enemyArmyCount');
+      const marinesInput = document.getElementById('enemyMarinesCount');
+      const airforceInput = document.getElementById('enemyAirforceCount');
+      
+      if (!armyInput || !marinesInput || !airforceInput) {
+        console.log('Enemy input elements not found');
+        return;
+      }
+      
+      const armyCount = parseInt(armyInput.value) || 0;
+      const marinesCount = parseInt(marinesInput.value) || 0;
+      const airforceCount = parseInt(airforceInput.value) || 0;
+      
+      const total = armyCount + marinesCount + airforceCount;
+      
+      console.log('Enemy counts:', { armyCount, marinesCount, airforceCount, total });
+      
+      // Calculate percentages
+      const armyPercent = total > 0 ? Math.round((armyCount / total) * 100) : 0;
+      const marinesPercent = total > 0 ? Math.round((marinesCount / total) * 100) : 0;
+      const airforcePercent = total > 0 ? Math.round((airforceCount / total) * 100) : 0;
+      
+      // Update percentage displays
+      const armyPercentEl = document.getElementById('enemyArmyPercent');
+      const marinesPercentEl = document.getElementById('enemyMarinesPercent');
+      const airforcePercentEl = document.getElementById('enemyAirforcePercent');
+      
+      if (armyPercentEl) armyPercentEl.textContent = `Percentage: ${armyPercent}%`;
+      if (marinesPercentEl) marinesPercentEl.textContent = `Percentage: ${marinesPercent}%`;
+      if (airforcePercentEl) airforcePercentEl.textContent = `Percentage: ${airforcePercent}%`;
+      
+      // Update summary
+      const totalTroopsEl = document.getElementById('enemyTotalTroops');
+      const deploymentEl = document.getElementById('enemyDeployment');
+      
+      if (totalTroopsEl) totalTroopsEl.textContent = total.toLocaleString();
+      if (deploymentEl) deploymentEl.textContent = total.toLocaleString();
+    }
+
+    function analyzeBattleHistory(battleHistory, enemyArmyPercent, enemyMarinesPercent, enemyAirforcePercent) {
+      if (!battleHistory || battleHistory.length === 0) {
+        return null;
+      }
+
+      // Find battles with similar enemy compositions (within 10% tolerance)
+      const similarBattles = battleHistory.filter(battle => {
+        if (!battle.enemyTroops) return false;
+        
+        const totalEnemy = battle.enemyTroops.army + battle.enemyTroops.marines + battle.enemyTroops.airforce;
+        if (totalEnemy === 0) return false;
+        
+        const battleArmyPercent = (battle.enemyTroops.army / totalEnemy) * 100;
+        const battleMarinesPercent = (battle.enemyTroops.marines / totalEnemy) * 100;
+        const battleAirforcePercent = (battle.enemyTroops.airforce / totalEnemy) * 100;
+        
+        const armyDiff = Math.abs(battleArmyPercent - enemyArmyPercent);
+        const marinesDiff = Math.abs(battleMarinesPercent - enemyMarinesPercent);
+        const airforceDiff = Math.abs(battleAirforcePercent - enemyAirforcePercent);
+        
+        return armyDiff <= 10 && marinesDiff <= 10 && airforceDiff <= 10;
+      });
+
+      if (similarBattles.length === 0) {
+        return null;
+      }
+
+      // Analyze successful strategies (victories with low loss rates)
+      const successfulBattles = similarBattles.filter(battle => {
+        if (battle.outcome !== 'victory') return false;
+        
+        const totalSent = battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce;
+        const totalLost = battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce;
+        const lossRate = totalSent > 0 ? (totalLost / totalSent) * 100 : 100;
+        
+        return lossRate <= 20; // Low loss rate indicates good strategy
+      });
+
+      if (successfulBattles.length === 0) {
+        return null;
+      }
+
+      // Calculate average successful troop distribution
+      let totalArmyPercent = 0;
+      let totalMarinesPercent = 0;
+      let totalAirforcePercent = 0;
+
+      successfulBattles.forEach(battle => {
+        const totalSent = battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce;
+        if (totalSent > 0) {
+          totalArmyPercent += (battle.troopsSent.army / totalSent) * 100;
+          totalMarinesPercent += (battle.troopsSent.marines / totalSent) * 100;
+          totalAirforcePercent += (battle.troopsSent.airforce / totalSent) * 100;
+        }
+      });
+
+      const avgArmy = Math.round(totalArmyPercent / successfulBattles.length);
+      const avgMarines = Math.round(totalMarinesPercent / successfulBattles.length);
+      const avgAirforce = Math.round(totalAirforcePercent / successfulBattles.length);
+
+      // Normalize to 100%
+      const total = avgArmy + avgMarines + avgAirforce;
+      if (total !== 100) {
+        const diff = 100 - total;
+        if (avgAirforce >= avgArmy && avgAirforce >= avgMarines) {
+          return { army: avgArmy, marines: avgMarines, airforce: avgAirforce + diff };
+        } else if (avgArmy >= avgMarines) {
+          return { army: avgArmy + diff, marines: avgMarines, airforce: avgAirforce };
+        } else {
+          return { army: avgArmy, marines: avgMarines + diff, airforce: avgAirforce };
+        }
+      }
+
+      return { army: avgArmy, marines: avgMarines, airforce: avgAirforce };
+    }
+
+    function generateCounterStrategy() {
+      const armyInput = document.getElementById('enemyArmyCount');
+      const marinesInput = document.getElementById('enemyMarinesCount');
+      const airforceInput = document.getElementById('enemyAirforceCount');
+      
+      const armyCount = parseInt(armyInput?.value) || 0;
+      const marinesCount = parseInt(marinesInput?.value) || 0;
+      const airforceCount = parseInt(airforceInput?.value) || 0;
+      
+      const total = armyCount + marinesCount + airforceCount;
+      
+      if (total === 0) {
+        alert('Please enter enemy troop counts first.');
+        return;
+      }
+      
+      const resultsEl = document.getElementById('counterResults');
+      if (!resultsEl) return;
+      
+      // Calculate enemy percentages
+      const armyPercent = total > 0 ? (armyCount / total) * 100 : 0;
+      const marinesPercent = total > 0 ? (marinesCount / total) * 100 : 0;
+      const airforcePercent = total > 0 ? (airforceCount / total) * 100 : 0;
+      
+      // Get battle history for learning
+      const battleHistory = JSON.parse(localStorage.getItem('battleHistory') || '[]');
+      const learnedStrategy = analyzeBattleHistory(battleHistory, armyPercent, marinesPercent, airforcePercent);
+      
+      let strategies = [];
+      
+      // Enemy Army is strong vs Commandos and Navy but weak vs Air Force
+      if (armyPercent > 30) {
+        strategies.push({
+          type: 'Air Force',
+          reason: `Enemy has strong Army (${Math.round(armyPercent)}%) - Air Force is effective against Army`,
+          recommendation: 'Deploy Air Force units to counter enemy Army strength'
+        });
+      }
+      
+      // Enemy Marines is strong vs Air Force and Navy but weak vs Army
+      if (marinesPercent > 30) {
+        strategies.push({
+          type: 'Army',
+          reason: `Enemy has strong Marines (${Math.round(marinesPercent)}%) - Army is effective against Marines`,
+          recommendation: 'Deploy Army units to counter enemy Marine strength'
+        });
+      }
+      
+      // Enemy Air Force is strong vs Army and Navy but weak vs Commandos (Marines)
+      if (airforcePercent > 30) {
+        strategies.push({
+          type: 'Marines',
+          reason: `Enemy has strong Air Force (${Math.round(airforcePercent)}%) - Marines are effective against Air Force`,
+          recommendation: 'Deploy Marine units to counter enemy Air Force strength'
+        });
+      }
+      
+      // Calculate recommended percentages based on enemy composition
+      let recommendedArmy = 33;
+      let recommendedMarines = 33;
+      let recommendedAirforce = 34;
+      
+      // Use custom strategy if available
+      if (customStrategy) {
+        recommendedArmy = customStrategy.army;
+        recommendedMarines = customStrategy.marines;
+        recommendedAirforce = customStrategy.airforce;
+      } else if (learnedStrategy) {
+        // Use learned strategy from battle history
+        recommendedArmy = learnedStrategy.army;
+        recommendedMarines = learnedStrategy.marines;
+        recommendedAirforce = learnedStrategy.airforce;
+      } else {
+        // Default strategy logic - adjust recommendations based on enemy strengths
+        if (armyPercent > 40) {
+          // Enemy has strong Army - increase Air Force
+          recommendedArmy = 20;
+          recommendedMarines = 30;
+          recommendedAirforce = 50;
+        } else if (marinesPercent > 40) {
+          // Enemy has strong Marines - increase Army
+          recommendedArmy = 50;
+          recommendedMarines = 20;
+          recommendedAirforce = 30;
+        } else if (airforcePercent > 40) {
+          // Enemy has strong Air Force - increase Marines
+          recommendedArmy = 30;
+          recommendedMarines = 50;
+          recommendedAirforce = 20;
+        } else if (armyPercent > 30) {
+          // Enemy has moderate Army strength - slightly favor Air Force
+          recommendedArmy = 25;
+          recommendedMarines = 35;
+          recommendedAirforce = 40;
+        } else if (marinesPercent > 30) {
+          // Enemy has moderate Marine strength - slightly favor Army
+          recommendedArmy = 40;
+          recommendedMarines = 25;
+          recommendedAirforce = 35;
+        } else if (airforcePercent > 30) {
+          // Enemy has moderate Air Force strength - slightly favor Marines
+          recommendedArmy = 35;
+          recommendedMarines = 40;
+          recommendedAirforce = 25;
+        }
+      }
+      
+      // Generate counter strategy HTML
+      let html = '<h4 style="color: #64b5f6; margin-top: 0;">🎯 Recommended Counter-Attack Force Distribution</h4>';
+      
+      html += '<div style="background: #374151; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #10b981;">';
+      html += '<h5 style="color: #10b981; margin-top: 0;">📊 Your Recommended Troop Percentages:</h5>';
+      html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 10px 0;">`;
+      html += `<div style="text-align: center; padding: 8px; background: #1f2937; border-radius: 5px;">`;
+      html += `<div style="color: #ff4d4d; font-weight: bold;">🪖 Army</div>`;
+      html += `<div style="font-size: 18px; font-weight: bold; color: #fff;">${recommendedArmy}%</div>`;
+      html += `</div>`;
+      html += `<div style="text-align: center; padding: 8px; background: #1f2937; border-radius: 5px;">`;
+      html += `<div style="color: #4da6ff; font-weight: bold;">⚓ Marines</div>`;
+      html += `<div style="font-size: 18px; font-weight: bold; color: #fff;">${recommendedMarines}%</div>`;
+      html += `</div>`;
+      html += `<div style="text-align: center; padding: 8px; background: #1f2937; border-radius: 5px;">`;
+      html += `<div style="color: #33cc33; font-weight: bold;">✈️ Air Force</div>`;
+      html += `<div style="font-size: 18px; font-weight: bold; color: #fff;">${recommendedAirforce}%</div>`;
+      html += `</div>`;
+      html += `</div>`;
+      html += '</div>';
+      
+      // Determine primary strategy (highest percentage)
+      let primaryStrategy = null;
+      if (recommendedArmy >= recommendedMarines && recommendedArmy >= recommendedAirforce) {
+        primaryStrategy = { type: 'Army', percentage: recommendedArmy, color: '#ff4d4d' };
+      } else if (recommendedMarines >= recommendedAirforce) {
+        primaryStrategy = { type: 'Marines', percentage: recommendedMarines, color: '#4da6ff' };
+      } else {
+        primaryStrategy = { type: 'Air Force', percentage: recommendedAirforce, color: '#33cc33' };
+      }
+      
+      // Add strategy explanation
+      html += '<div style="background: #374151; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #3b82f6;">';
+      html += '<h5 style="color: #64b5f6; margin-top: 0;">🎯 Strategy Rationale:</h5>';
+      
+      // Add learning indicator if using battle history
+      if (learnedStrategy) {
+        html += '<div style="background: #065f46; padding: 8px; margin: 8px 0; border-radius: 5px; border-left: 3px solid #10b981;">';
+        html += '<span style="color: #10b981; font-weight: bold;">🧠 AI Learning:</span> ';
+        html += '<span style="color: #d1fae5;">This strategy is based on analysis of your previous successful battles against similar enemy compositions.</span>';
+        html += '</div>';
+      }
+      
+      if (strategies.length > 0) {
+        // Find the strategy that matches our primary recommendation
+        const matchingStrategy = strategies.find(s => s.type === primaryStrategy.type);
+        if (matchingStrategy) {
+          html += `<div style="margin: 8px 0; padding: 8px; background: #1f2937; border-radius: 5px; border-left: 3px solid ${primaryStrategy.color};">`;
+          html += `<strong style="color: ${primaryStrategy.color};">Primary Counter: ${primaryStrategy.type} (${primaryStrategy.percentage}%)</strong><br>`;
+          html += `${matchingStrategy.reason}<br>`;
+          html += `<em style="color: #ccc;">${matchingStrategy.recommendation}</em>`;
+          html += '</div>';
+        }
+        
+        // Add secondary considerations if there are other strong enemy types
+        const otherStrategies = strategies.filter(s => s.type !== primaryStrategy.type);
+        if (otherStrategies.length > 0) {
+          html += '<div style="margin: 8px 0; padding: 8px; background: #1f2937; border-radius: 5px;">';
+          html += '<strong style="color: #64b5f6;">Secondary Considerations:</strong><br>';
+          otherStrategies.forEach(strategy => {
+            html += `• ${strategy.reason}<br>`;
+          });
+          html += '</div>';
+      }
+    } else {
+        html += '<div style="margin: 8px 0; padding: 8px; background: #1f2937; border-radius: 5px;">';
+        html += '<strong style="color: #64b5f6;">Balanced Approach:</strong> Enemy force is relatively balanced. Using a mixed approach to maintain flexibility and avoid being countered.';
+        html += '</div>';
+      }
+      
+      html += '</div>';
+      
+      // Add action buttons
+      html += '<div style="margin-top: 20px; text-align: center;">';
+      html += '<button id="editStrategyBtn" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; margin-right: 10px;">Edit Strategy</button>';
+      html += '<button id="useForForceBtn" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: bold;">📋 Use for Force Distribution</button>';
+      html += '</div>';
+      
+      // Add battle history insights if available
+      if (learnedStrategy) {
+        const battleHistory = JSON.parse(localStorage.getItem('battleHistory') || '[]');
+        const similarBattles = battleHistory.filter(battle => {
+          if (!battle.enemyTroops) return false;
+          const totalEnemy = battle.enemyTroops.army + battle.enemyTroops.marines + battle.enemyTroops.airforce;
+          if (totalEnemy === 0) return false;
+          const battleArmyPercent = (battle.enemyTroops.army / totalEnemy) * 100;
+          const battleMarinesPercent = (battle.enemyTroops.marines / totalEnemy) * 100;
+          const battleAirforcePercent = (battle.enemyTroops.airforce / totalEnemy) * 100;
+          const armyDiff = Math.abs(battleArmyPercent - armyPercent);
+          const marinesDiff = Math.abs(battleMarinesPercent - marinesPercent);
+          const airforceDiff = Math.abs(battleAirforcePercent - airforcePercent);
+          return armyDiff <= 10 && marinesDiff <= 10 && airforceDiff <= 10;
+        });
+        
+        const successfulBattles = similarBattles.filter(battle => {
+          if (battle.outcome !== 'victory') return false;
+          const totalSent = battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce;
+          const totalLost = battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce;
+          const lossRate = totalSent > 0 ? (totalLost / totalSent) * 100 : 100;
+          return lossRate <= 20;
+        });
+        
+        if (similarBattles.length > 0) {
+          html += '<div style="background: #1f2937; padding: 12px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #10b981;">';
+          html += '<h6 style="color: #10b981; margin-top: 0;">📊 Battle History Analysis:</h6>';
+          html += `<div style="color: #d1fae5; font-size: 0.9em;">`;
+          html += `• Found ${similarBattles.length} similar battles in your history<br>`;
+          html += `• ${successfulBattles.length} were successful (victory with ≤20% losses)<br>`;
+          html += `• Average loss rate in successful battles: ${successfulBattles.length > 0 ? 
+            (successfulBattles.reduce((sum, battle) => {
+              const totalSent = battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce;
+              const totalLost = battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce;
+              return sum + (totalSent > 0 ? (totalLost / totalSent) * 100 : 0);
+            }, 0) / successfulBattles.length).toFixed(1) : '0'}%`;
+          html += `</div></div>`;
+        }
+      }
+      
+      resultsEl.innerHTML = html;
+      resultsEl.style.display = 'block';
+      
+      // Add event listeners for the new buttons
+      const editBtn = document.getElementById('editStrategyBtn');
+      const useBtn = document.getElementById('useForForceBtn');
+      
+      if (editBtn) {
+        editBtn.addEventListener('click', () => {
+          showEditStrategyModal(recommendedArmy, recommendedMarines, recommendedAirforce);
+        });
+      }
+      
+      if (useBtn) {
+        useBtn.addEventListener('click', () => {
+          // Copy percentages to Force Distribution section
+          document.getElementById('armyPercentage').value = recommendedArmy;
+          document.getElementById('marinesPercentage').value = recommendedMarines;
+          document.getElementById('airforcePercentage').value = recommendedAirforce;
+          
+          // Auto-calculate troop counts based on new percentages
+          autoCalculateTroopCounts();
+          
+          // Trigger the calculation to update troop counts
+          updateCalculations();
+          
+          // Show success message
+          useBtn.style.background = '#059669';
+          useBtn.textContent = '✅ Applied!';
+          setTimeout(() => {
+            useBtn.style.background = '#10b981';
+            useBtn.textContent = '📋 Use for Force Distribution';
+          }, 2000);
+        });
+      }
+    }
+
+    // Custom Strategy Management
+    let customStrategy = null;
+
+    function showEditStrategyModal(army, marines, airforce) {
+      // Create modal overlay
+      const modal = document.createElement('div');
+      modal.style.cssText = `
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.8); z-index: 1000; display: flex;
+        align-items: center; justify-content: center;
+      `;
+      
+      modal.innerHTML = `
+        <div style="background: #1a1a2e; padding: 30px; border-radius: 15px; border: 1px solid #333; max-width: 500px; width: 90%;">
+          <h3 style="color: #64b5f6; margin-top: 0; text-align: center;">Edit Counter Strategy</h3>
+          
+          <div style="margin: 20px 0;">
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+              <div style="text-align: center;">
+                <label style="color: #ff4d4d; font-weight: bold; display: block; margin-bottom: 8px;">🪖 Army</label>
+                <input type="number" id="editArmy" value="${army}" min="0" max="100" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #555; background: #2a2a3e; color: white; text-align: center;">
+              </div>
+              <div style="text-align: center;">
+                <label style="color: #4da6ff; font-weight: bold; display: block; margin-bottom: 8px;">⚓ Marines</label>
+                <input type="number" id="editMarines" value="${marines}" min="0" max="100" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #555; background: #2a2a3e; color: white; text-align: center;">
+              </div>
+              <div style="text-align: center;">
+                <label style="color: #33cc33; font-weight: bold; display: block; margin-bottom: 8px;">✈️ Air Force</label>
+                <input type="number" id="editAirforce" value="${airforce}" min="0" max="100" style="width: 100%; padding: 8px; border-radius: 5px; border: 1px solid #555; background: #2a2a3e; color: white; text-align: center;">
+              </div>
+            </div>
+            
+            <div style="background: #374151; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+              <label style="display: flex; align-items: center; cursor: pointer;">
+                <input type="checkbox" id="saveStrategy" style="margin-right: 10px;">
+                <span style="color: #ccc;">💾 Save this strategy as my default counter strategy</span>
+              </label>
+              <p style="color: #999; font-size: 0.85em; margin: 8px 0 0 0;">This will apply this strategy logic to all future enemy analyses</p>
+            </div>
+          </div>
+          
+          <div style="text-align: center;">
+            <button id="cancelEdit" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-right: 10px;">Cancel</button>
+            <button id="applyEdit" style="background: #10b981; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold;">Apply Strategy</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      // Add event listeners
+      document.getElementById('cancelEdit').addEventListener('click', () => {
+        document.body.removeChild(modal);
+      });
+      
+      document.getElementById('applyEdit').addEventListener('click', () => {
+        const newArmy = parseInt(document.getElementById('editArmy').value) || 0;
+        const newMarines = parseInt(document.getElementById('editMarines').value) || 0;
+        const newAirforce = parseInt(document.getElementById('editAirforce').value) || 0;
+        const saveStrategy = document.getElementById('saveStrategy').checked;
+        
+        // Validate percentages sum to 100
+        const total = newArmy + newMarines + newAirforce;
+        if (total !== 100) {
+          alert('Percentages must sum to exactly 100%');
+          return;
+        }
+        
+        // Save custom strategy if requested
+        if (saveStrategy) {
+          customStrategy = {
+            army: newArmy,
+            marines: newMarines,
+            airforce: newAirforce,
+            name: 'Custom Strategy'
+          };
+          localStorage.setItem('customCounterStrategy', JSON.stringify(customStrategy));
+          alert('✅ Custom strategy saved! This will be used for all future counter strategies.');
+        }
+        
+        // Apply to Force Distribution
+        document.getElementById('armyPercentage').value = newArmy;
+        document.getElementById('marinesPercentage').value = newMarines;
+        document.getElementById('airforcePercentage').value = newAirforce;
+        
+        // Auto-calculate troop counts based on new percentages
+        autoCalculateTroopCounts();
+        
+        updateCalculations();
+        
+        // Close modal
+        document.body.removeChild(modal);
+        
+        // Show success message
+        const resultsEl = document.getElementById('counterResults');
+        if (resultsEl) {
+          resultsEl.innerHTML = `
+            <div style="text-align: center; padding: 20px;">
+              <h4 style="color: #10b981; margin-top: 0;">✅ Strategy Applied!</h4>
+              <p style="color: #ccc;">Custom strategy has been applied to Force Distribution</p>
+              ${saveStrategy ? '<p style="color: #64b5f6;">💾 Strategy saved for future use</p>' : ''}
+            </div>
+          `;
+        }
+      });
+      
+      // Auto-calculate total as user types
+      ['editArmy', 'editMarines', 'editAirforce'].forEach(id => {
+        document.getElementById(id).addEventListener('input', () => {
+          const army = parseInt(document.getElementById('editArmy').value) || 0;
+          const marines = parseInt(document.getElementById('editMarines').value) || 0;
+          const airforce = parseInt(document.getElementById('editAirforce').value) || 0;
+          const total = army + marines + airforce;
+          
+          const applyBtn = document.getElementById('applyEdit');
+          if (total === 100) {
+            applyBtn.style.background = '#10b981';
+            applyBtn.textContent = 'Apply Strategy';
+          } else {
+            applyBtn.style.background = '#ef4444';
+            applyBtn.textContent = `Apply Strategy (${total}%)`;
+          }
+        });
+      });
+    }
+
+    // Load custom strategy on page load
+    function loadCustomStrategy() {
+      const saved = localStorage.getItem('customCounterStrategy');
+      if (saved) {
+        customStrategy = JSON.parse(saved);
+        console.log('Loaded custom strategy:', customStrategy);
+      }
+    }
+
+
+    // Auto-calculate troop counts from pre-loaded percentages
+    function autoCalculateTroopCounts() {
+      const availableTroops = getAvailableTroops();
+      console.log('Auto-calculating troop counts with available troops:', availableTroops);
+      console.log('BRANCHES array:', BRANCHES);
+      
+      BRANCHES.forEach(({ key }) => {
+        const percentageElement = document.getElementById(key + "Percentage");
+        const countElement = document.getElementById(key + "Count");
+        
+        console.log(`Looking for elements: ${key}Percentage and ${key}Count`);
+        console.log(`Percentage element:`, percentageElement);
+        console.log(`Count element:`, countElement);
+        
+        if (percentageElement && countElement) {
+          const percentage = readInt(key + "Percentage", 0);
+          const troopCount = Math.round((percentage / 100) * availableTroops);
+          
+          console.log(`${key}: ${percentage}% = ${troopCount} troops`);
+          console.log(`Setting ${key}Count value to:`, troopCount);
+          
+          countElement.value = troopCount;
+          
+          // Trigger input event to update any dependent calculations
+          countElement.dispatchEvent(new Event('input', { bubbles: true }));
+        } else {
+          console.error(`Elements not found for ${key}:`, {
+            percentageElement: !!percentageElement,
+            countElement: !!countElement
+          });
+        }
+      });
+    }
+
     // First render
     updateCalculations();
-  </script>
+    loadCustomStrategy();
+    
+    // Setup enemy force distribution and auto-calculate troop counts after DOM is ready
+    setTimeout(() => {
+      setupEnemyForceDistribution();
+      autoCalculateTroopCounts();
+    }, 100);
+    
+    // Also try again after a longer delay to ensure DOM is fully ready
+    setTimeout(() => {
+      console.log('Second attempt at auto-calculating troop counts...');
+      autoCalculateTroopCounts();
+    }, 500);
+    
+    // Ensure we run after DOM is completely loaded
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => {
+        console.log('DOM fully loaded, running auto-calculate...');
+        autoCalculateTroopCounts();
+        setupBattleDataListener();
+      });
+    } else {
+      // DOM is already loaded
+      console.log('DOM already loaded, running auto-calculate immediately...');
+      autoCalculateTroopCounts();
+      setupBattleDataListener();
+    }
+    
+    // Listen for new battle data updates
+    function setupBattleDataListener() {
+      // Listen for custom events from battle results page
+      window.addEventListener('battleDataUpdated', function(event) {
+        const battleData = event.detail;
+        console.log('New battle data received:', battleData);
+        
+        // Check if current enemy composition matches the new battle
+        const armyCount = parseInt(document.getElementById('enemyArmyCount')?.value) || 0;
+        const marinesCount = parseInt(document.getElementById('enemyMarinesCount')?.value) || 0;
+        const airforceCount = parseInt(document.getElementById('enemyAirforceCount')?.value) || 0;
+        
+        if (armyCount > 0 || marinesCount > 0 || airforceCount > 0) {
+          // Auto-update counter strategy if enemy data is present
+          setTimeout(() => {
+            generateCounterStrategy();
+            showUpdateNotification(battleData);
+          }, 1000);
+        }
+      });
+      
+      // Check for pending updates on page load
+      checkForPendingUpdates();
+    }
+    
+    function checkForPendingUpdates() {
+      const updateData = localStorage.getItem('counterStrategyUpdateNeeded');
+      if (updateData) {
+        try {
+          const update = JSON.parse(updateData);
+          const timeSinceUpdate = Date.now() - update.timestamp;
+          
+          // If update is recent (within last 5 minutes), show notification
+          if (timeSinceUpdate < 5 * 60 * 1000) {
+            showUpdateNotification(update);
+          }
+          
+          // Clear the update flag
+          localStorage.removeItem('counterStrategyUpdateNeeded');
+        } catch (error) {
+          console.error('Error parsing update data:', error);
+          localStorage.removeItem('counterStrategyUpdateNeeded');
+        }
+      }
+    }
+    
+    function showUpdateNotification(battleData) {
+      // Create notification element
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4caf50;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        z-index: 1000;
+        max-width: 300px;
+        font-size: 14px;
+        animation: slideIn 0.3s ease-out;
+      `;
+      
+      const lossRate = battleData.lossRate || calculateLossRate(battleData);
+      const outcome = battleData.outcome || 'unknown';
+      const outcomeIcon = outcome === 'victory' ? '🎉' : outcome === 'defeat' ? '💥' : '⚔️';
+      
+      notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 20px;">${outcomeIcon}</span>
+          <div>
+            <div style="font-weight: bold;">Counter Strategy Updated!</div>
+            <div style="font-size: 12px; opacity: 0.9;">
+              New battle data: ${outcome} (${lossRate.toFixed(1)}% loss rate)
+            </div>
+          </div>
+          <button onclick="this.parentElement.parentElement.remove()" style="
+            background: none; border: none; color: white; font-size: 18px; 
+            cursor: pointer; padding: 0; margin-left: 10px;
+          ">×</button>
+        </div>
+      `;
+      
+      // Add CSS animation
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes slideIn {
+          from { transform: translateX(100%); opacity: 0; }
+          to { transform: translateX(0); opacity: 1; }
+        }
+      `;
+      document.head.appendChild(style);
+      
+      document.body.appendChild(notification);
+      
+      // Auto-remove after 5 seconds
+      setTimeout(() => {
+        if (notification.parentElement) {
+          notification.remove();
+        }
+      }, 5000);
+    }
+    
+    function calculateLossRate(battle) {
+      if (battle.troopsSent && battle.troopsLost) {
+        const totalSent = battle.troopsSent.army + battle.troopsSent.marines + battle.troopsSent.airforce;
+        const totalLost = battle.troopsLost.army + battle.troopsLost.marines + battle.troopsLost.airforce;
+        return totalSent > 0 ? (totalLost / totalSent) * 100 : 0;
+      }
+      return 0;
+    }
+</script>
 </body>
 </html>

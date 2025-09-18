@@ -3,11 +3,13 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self';">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;">
 <meta http-equiv="X-Content-Type-Options" content="nosniff">
 <meta http-equiv="X-Frame-Options" content="DENY">
 <meta http-equiv="X-XSS-Protection" content="1; mode=block">
 <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+<meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=()">
+<meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
 
 <!-- PWA Meta Tags -->
 <link rel="manifest" href="./manifest.webmanifest">
@@ -17,170 +19,146 @@
 <meta name="apple-mobile-web-app-title" content="Troop Tools">
 <link rel="apple-touch-icon" href="./icon-192.png">
 
+<!-- Accessibility Meta Tags -->
+<meta name="description" content="Comprehensive military force calculator suite for troop management, battle analysis, and strategic planning. Works offline with full PWA support.">
+<meta name="keywords" content="military, calculator, troops, battle, strategy, PWA, offline">
+<meta name="author" content="Troop Tools">
+
 <title>Troop Tools - Military Calculator Suite</title>
 <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
+<!-- Skip to main content link for screen readers -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<h1>Troop Tools</h1>
-<p style="text-align: center; color: #666; margin-bottom: 30px;">Military Force Calculator Suite</p>
+<header role="banner">
+  <h1>Troop Tools</h1>
+  <p style="text-align: center; color: #666; margin-bottom: 30px;">Military Force Calculator Suite</p>
+</header>
 
-<div class="section">
-  <h2>Available Tools</h2>
-  <div class="tool-grid">
-    <a href="./troop_swap_calculator.html" class="tool-card">
-      <div class="tool-icon">⚔️</div>
-      <h3>Troop Swap Calculator</h3>
-      <p>Calculate alliance ratios and troop deployments for player swaps</p>
-    </a>
-    
-    <a href="./battle_results.html" class="tool-card">
-      <div class="tool-icon">📊</div>
-      <h3>Battle Results</h3>
-      <p>Analyze and track battle outcomes and performance metrics</p>
-    </a>
-    
-    <a href="./control_point.html" class="tool-card">
-      <div class="tool-icon">🎯</div>
-      <h3>Control Point</h3>
-      <p>Strategic control point management and resource allocation</p>
-    </a>
-    
-    <a href="./known_enemies.html" class="tool-card">
-      <div class="tool-icon">👁️</div>
-      <h3>Known Enemies</h3>
-      <p>Track and manage intelligence on enemy forces and movements</p>
-    </a>
-  </div>
-</div>
-
-<div class="section">
-  <h2>Install Troop Tools</h2>
-  <div class="install-section">
-    <p>Install Troop Tools as a native app on your device for the best experience:</p>
-    <ul class="install-benefits">
-      <li>✅ Works completely offline</li>
-      <li>✅ Fast access from home screen</li>
-      <li>✅ No browser UI - full screen app</li>
-      <li>✅ Automatic updates</li>
-      <li>✅ Persistent data storage</li>
-    </ul>
-    <button id="installBtn" class="install-button">
-      📱 Install Troop Tools
-    </button>
-    <div id="installStatus" class="install-status"></div>
-  </div>
-</div>
+<main id="main-content" role="main">
+  <section class="section" aria-labelledby="tools-heading">
+    <h2 id="tools-heading">Available Tools</h2>
+    <div class="tool-grid" role="grid" aria-label="Available military calculator tools">
+      <a href="./troop_swap_calculator.html" class="tool-card" role="gridcell" aria-describedby="troop-swap-desc">
+        <div class="tool-icon" aria-hidden="true">⚔️</div>
+        <h3>Troop Swap Calculator</h3>
+        <p id="troop-swap-desc">Calculate alliance ratios and troop deployments for player swaps</p>
+      </a>
+      
+      <a href="./battle_results.html" class="tool-card" role="gridcell" aria-describedby="battle-results-desc">
+        <div class="tool-icon" aria-hidden="true">📊</div>
+        <h3>Battle Results</h3>
+        <p id="battle-results-desc">Analyze and track battle outcomes and performance metrics</p>
+      </a>
+      
+      <a href="./control_point.html" class="tool-card" role="gridcell" aria-describedby="control-point-desc">
+        <div class="tool-icon" aria-hidden="true">🎯</div>
+        <h3>Control Point</h3>
+        <p id="control-point-desc">Strategic control point management and resource allocation</p>
+      </a>
+      
+      <a href="./known_enemies.html" class="tool-card" role="gridcell" aria-describedby="known-enemies-desc">
+        <div class="tool-icon" aria-hidden="true">👁️</div>
+        <h3>Known Enemies</h3>
+        <p id="known-enemies-desc">Track and manage intelligence on enemy forces and movements</p>
+      </a>
+    </div>
+  </section>
+</main>
 
 
 <script src="./app.js"></script>
 <script>
-  let deferredPrompt;
-  const installBtn = document.getElementById('installBtn');
-  const installStatus = document.getElementById('installStatus');
-
-  // PWA Install functionality
-  window.addEventListener('beforeinstallprompt', (e) => {
-    console.log('PWA install prompt available');
-    // Prevent the mini-infobar from appearing on mobile
-    e.preventDefault();
-    // Stash the event so it can be triggered later
-    deferredPrompt = e;
-    // Update button text to show it's ready
-    installBtn.innerHTML = '📱 Install Troop Tools';
-    installStatus.innerHTML = '<div class="info">Ready to install! Click the button above.</div>';
-  });
-
-  // Check if PWA prompt is not available after page load
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      if (!deferredPrompt) {
-        console.log('PWA install prompt not available - showing fallback');
-        installBtn.innerHTML = '📱 Install Instructions';
-        installStatus.innerHTML = '<div class="info">Use your browser menu to install this app.</div>';
-      }
-    }, 1000);
-  });
-
-  installBtn.addEventListener('click', async (e) => {
-    e.preventDefault();
-    console.log('Install button clicked, deferredPrompt:', !!deferredPrompt);
-    
-    if (deferredPrompt) {
-      try {
-        console.log('Showing install prompt...');
-        // Show the install prompt
-        deferredPrompt.prompt();
-        // Wait for the user to respond to the prompt
-        const { outcome } = await deferredPrompt.userChoice;
-        console.log('Install outcome:', outcome);
-        
-        if (outcome === 'accepted') {
-          installStatus.innerHTML = '<div class="success">✅ Troop Tools installed successfully!</div>';
-          installBtn.style.display = 'none';
-        } else {
-          installStatus.innerHTML = '<div class="info">Installation cancelled. You can install later from your browser menu.</div>';
-        }
-        
-        // Clear the deferredPrompt
-        deferredPrompt = null;
-      } catch (error) {
-        console.error('Install prompt error:', error);
-        installStatus.innerHTML = '<div class="info">Installation failed. Please use your browser menu to install.</div>';
-      }
-    } else {
-      // Fallback instructions
-      console.log('Showing fallback instructions');
-      installStatus.innerHTML = '<div class="info"><strong>To install:</strong><br>• Chrome: Click ⋮ menu → "Install app"<br>• Safari: Share → "Add to Home Screen"<br>• Samsung Internet: Menu → "Add to Home screen"<br>• Edge: Click ⋮ menu → "Apps" → "Install this site as an app"</div>';
-    }
-  });
-
-  // Check if app is already installed
-  window.addEventListener('appinstalled', () => {
-    installStatus.innerHTML = '<div class="success">🎉 Troop Tools is now installed!</div>';
-    installBtn.style.display = 'none';
-  });
-
-  // Service Worker registration
+  // Service Worker Registration
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./service-worker.js').then(registration => {
-      // Check for updates
-      registration.addEventListener('updatefound', () => {
-        const newWorker = registration.installing;
-        newWorker.addEventListener('statechange', () => {
-          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-            showUpdateNotification();
-          }
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./service-worker.js')
+        .then(registration => {
+          console.log('SW registered: ', registration);
+          
+          // Check for updates
+          registration.addEventListener('updatefound', () => {
+            const newWorker = registration.installing;
+            newWorker.addEventListener('statechange', () => {
+              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                // New content is available, show update notification
+                if (confirm('New version available! Reload to update?')) {
+                  newWorker.postMessage({ type: 'SKIP_WAITING' });
+                  window.location.reload();
+                }
+              }
+            });
+          });
+        })
+        .catch(registrationError => {
+          console.log('SW registration failed: ', registrationError);
         });
-      });
     });
   }
 
-  function showUpdateNotification() {
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed; top: 20px; right: 20px; z-index: 1000;
-      background: #007bff; color: white; padding: 12px 16px;
-      border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-      font-family: Arial, sans-serif; font-size: 14px;
-      display: flex; align-items: center; gap: 12px;
-    `;
-    notification.innerHTML = `
-      <span>Update available</span>
-      <button onclick="window.location.reload()" style="
-        background: white; color: #007bff; border: none;
-        padding: 6px 12px; border-radius: 4px; cursor: pointer;
-        font-weight: bold;
-      ">Reload</button>
-    `;
-    document.body.appendChild(notification);
+  // PWA Install Prompt
+  let deferredPrompt;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
     
-    setTimeout(() => {
-      if (notification.parentNode) {
-        notification.parentNode.removeChild(notification);
+    // Show install button if not already installed
+    if (!window.matchMedia('(display-mode: standalone)').matches) {
+      showInstallButton();
+    }
+  });
+
+  function showInstallButton() {
+    const installButton = document.createElement('button');
+    installButton.textContent = 'Install App';
+    installButton.className = 'install-button';
+    installButton.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #0f3460;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      z-index: 1000;
+    `;
+    
+    installButton.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log(`User response to the install prompt: ${outcome}`);
+        deferredPrompt = null;
+        installButton.remove();
       }
-    }, 10000);
+    });
+    
+    document.body.appendChild(installButton);
   }
+
+  // Handle app installed
+  window.addEventListener('appinstalled', (evt) => {
+    console.log('PWA was installed');
+  });
+
+  // Online/Offline status
+  function updateOnlineStatus() {
+    const status = navigator.onLine ? 'online' : 'offline';
+    document.body.classList.toggle('offline', !navigator.onLine);
+    
+    if (!navigator.onLine) {
+      console.log('App is offline');
+    }
+  }
+
+  window.addEventListener('online', updateOnlineStatus);
+  window.addEventListener('offline', updateOnlineStatus);
+  updateOnlineStatus();
 </script>
 
 </body>

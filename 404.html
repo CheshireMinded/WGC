@@ -1,64 +1,244 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Page Not Found - Troop Tools</title>
-<style>
-  body {
-    font-family: Arial, sans-serif;
-    background: #f0f2f5;
-    margin: 0;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
-    text-align: center;
-  }
-  .container {
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 2px 6px rgba(0,0,0,.08);
-    max-width: 500px;
-  }
-  h1 {
-    color: #333;
-    margin-bottom: 20px;
-  }
-  p {
-    color: #666;
-    margin-bottom: 30px;
-    line-height: 1.5;
-  }
-  .btn {
-    display: inline-block;
-    padding: 12px 24px;
-    background: #007bff;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background 0.2s;
-  }
-  .btn:hover {
-    background: #0056b3;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"/>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests; block-all-mixed-content;">
+    <meta http-equiv="X-Content-Type-Options" content="nosniff">
+    <meta http-equiv="X-Frame-Options" content="DENY">
+    <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
+    <meta http-equiv="Permissions-Policy" content="camera=(), microphone=(), geolocation=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=(), ambient-light-sensor=()">
+    <meta http-equiv="Strict-Transport-Security" content="max-age=31536000; includeSubDomains; preload">
+    
+    <!-- PWA Meta Tags -->
+    <link rel="manifest" href="./manifest.webmanifest">
+    <meta name="theme-color" content="#0f3460">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Troop Tools">
+    <link rel="apple-touch-icon" href="./icon-192.png">
+    
+    <title>Offline - Troop Tools</title>
+    <link rel="stylesheet" href="./styles.css">
+    <style>
+        .offline-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            text-align: center;
+            background: linear-gradient(135deg, #1a1a2e 0%, #0f3460 100%);
+            color: white;
+        }
+        
+        .offline-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.8;
+        }
+        
+        .offline-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        
+        .offline-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        
+        .offline-actions {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        
+        .offline-button {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        
+        .offline-button:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        .offline-features {
+            margin-top: 3rem;
+            max-width: 800px;
+        }
+        
+        .offline-features h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .feature-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .feature-item h4 {
+            margin-bottom: 0.5rem;
+            color: #4fc3f7;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            z-index: 1000;
+        }
+        
+        .connection-status.online {
+            background: #4caf50;
+            color: white;
+        }
+        
+        .connection-status.offline {
+            background: #f44336;
+            color: white;
+        }
+        
+        @media (max-width: 768px) {
+            .offline-title {
+                font-size: 2rem;
+            }
+            
+            .offline-subtitle {
+                font-size: 1rem;
+            }
+            
+            .offline-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .offline-button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>Page Not Found</h1>
-    <p>The page you're looking for doesn't exist or has been moved.</p>
-    <a href="./" class="btn">Go to Troop Tools</a>
-  </div>
-  
-  <script>
-    // Auto-redirect to main app after 3 seconds
-    setTimeout(() => {
-      window.location.href = './';
-    }, 3000);
-  </script>
+    <div class="connection-status offline" id="connectionStatus">
+        🔴 Offline
+    </div>
+    
+    <div class="offline-container">
+        <div class="offline-icon">📡</div>
+        <h1 class="offline-title">You're Offline</h1>
+        <p class="offline-subtitle">
+            Don't worry! Troop Tools works offline. You can still access all your military calculators and data. 
+            Your changes will be saved locally and synced when you're back online.
+        </p>
+        
+        <div class="offline-actions">
+            <a href="./index.html" class="offline-button">🏠 Go to Dashboard</a>
+            <button onclick="window.history.back()" class="offline-button">⬅️ Go Back</button>
+            <button onclick="window.location.reload()" class="offline-button">🔄 Retry</button>
+        </div>
+        
+        <div class="offline-features">
+            <h3>Available Offline Features</h3>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <h4>⚔️ Troop Swap Calculator</h4>
+                    <p>Calculate alliance ratios and troop deployments</p>
+                </div>
+                <div class="feature-item">
+                    <h4>📊 Battle Results</h4>
+                    <p>Track and analyze battle outcomes</p>
+                </div>
+                <div class="feature-item">
+                    <h4>🎯 Control Point</h4>
+                    <p>Strategic control point management</p>
+                </div>
+                <div class="feature-item">
+                    <h4>👁️ Known Enemies</h4>
+                    <p>Track enemy intelligence data</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Update connection status
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                status.textContent = '🟢 Online';
+                status.className = 'connection-status online';
+                
+                // Auto-redirect to home when back online
+                setTimeout(() => {
+                    window.location.href = './index.html';
+                }, 2000);
+            } else {
+                status.textContent = '🔴 Offline';
+                status.className = 'connection-status offline';
+            }
+        }
+        
+        // Listen for online/offline events
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Initial status check
+        updateConnectionStatus();
+        
+        // Service Worker registration for offline functionality
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./service-worker.js')
+                .then(registration => {
+                    console.log('SW registered for offline page');
+                })
+                .catch(error => {
+                    console.log('SW registration failed:', error);
+                });
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                window.history.back();
+            } else if (e.key === 'Enter' || e.key === ' ') {
+                if (document.activeElement.tagName === 'BUTTON') {
+                    document.activeElement.click();
+                }
+            }
+        });
+    </script>
 </body>
 </html>

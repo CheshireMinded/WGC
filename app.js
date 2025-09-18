@@ -515,6 +515,7 @@ function setupEventListeners() {
   });
 }
 
+
 /** ---------- Wire up ---------- **/
 document.addEventListener('DOMContentLoaded', async function() {
   // Request persistent storage
@@ -528,6 +529,7 @@ document.addEventListener('DOMContentLoaded', async function() {
   
   // Setup event listeners
   setupEventListeners();
+  
   
   // First normalize/display
   readInitNormalized();
