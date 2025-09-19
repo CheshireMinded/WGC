@@ -17,7 +17,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Troop Tools">
-  <link rel="apple-touch-icon" href="./icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
 
   <!-- Accessibility Meta Tags -->
   <meta name="description" content="Comprehensive military force calculator suite for troop management, battle analysis, and strategic planning. Works offline with full PWA support.">
@@ -25,6 +25,7 @@
   <meta name="author" content="Troop Tools">
 
   <title>Troop Tools - Military Calculator Suite</title>
+  <link rel="stylesheet" href="../src/styles/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -140,15 +141,6 @@
   <!-- Skip to main content link for screen readers -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
 
-  <nav role="navigation" aria-label="Main navigation">
-    <ul style="list-style: none; padding: 0; margin: 0; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; background: #1a1a2e; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-      <li><a href="./" style="color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 4px; background: #0f3460; transition: background-color 0.3s;">🏠 Home</a></li>
-      <li><a href="./troop_swap_calculator.html" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">⚔️ Troop Swap</a></li>
-      <li><a href="./battle_results.html" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">📊 Battle Results</a></li>
-      <li><a href="./control_point.html" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">🎯 Control Point</a></li>
-      <li><a href="./known_enemies.html" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">👁️ Known Enemies</a></li>
-    </ul>
-  </nav>
 
   <div class="container">
     <h1>🎖️ Troop Tools</h1>
@@ -158,25 +150,25 @@
       <section class="section" aria-labelledby="tools-heading">
         <h2 id="tools-heading">Available Tools</h2>
         <div class="tool-grid" role="grid" aria-label="Available military calculator tools">
-          <a href="./troop_swap_calculator.html" class="tool-card" role="gridcell" aria-describedby="troop-swap-desc">
+          <a href="./pages/troop_swap_calculator.html" class="tool-card" role="gridcell" aria-describedby="troop-swap-desc">
             <div class="tool-icon" aria-hidden="true">⚔️</div>
             <h3>Troop Swap Calculator</h3>
             <p id="troop-swap-desc">Calculate alliance ratios and troop deployments for player swaps</p>
           </a>
           
-          <a href="./battle_results.html" class="tool-card" role="gridcell" aria-describedby="battle-results-desc">
+          <a href="./pages/battle_results.html" class="tool-card" role="gridcell" aria-describedby="battle-results-desc">
             <div class="tool-icon" aria-hidden="true">📊</div>
             <h3>Battle Results</h3>
             <p id="battle-results-desc">Analyze and track battle outcomes and performance metrics</p>
           </a>
           
-          <a href="./control_point.html" class="tool-card" role="gridcell" aria-describedby="control-point-desc">
+          <a href="./pages/control_point.html" class="tool-card" role="gridcell" aria-describedby="control-point-desc">
             <div class="tool-icon" aria-hidden="true">🎯</div>
             <h3>Control Point</h3>
             <p id="control-point-desc">Strategic control point management and resource allocation</p>
           </a>
           
-          <a href="./known_enemies.html" class="tool-card" role="gridcell" aria-describedby="known-enemies-desc">
+          <a href="./pages/known_enemies.html" class="tool-card" role="gridcell" aria-describedby="known-enemies-desc">
             <div class="tool-icon" aria-hidden="true">👁️</div>
             <h3>Known Enemies</h3>
             <p id="known-enemies-desc">Track and manage intelligence on enemy forces and movements</p>
@@ -186,15 +178,9 @@
     </main>
   </div>
 
-  <footer role="contentinfo" style="margin-top: 40px; padding: 20px; text-align: center; color: #666; border-top: 1px solid #333;">
-    <p>&copy; 2024 Troop Tools. Built with ❤️ for the military gaming community.</p>
-    <p style="font-size: 0.9em; margin-top: 10px;">
-      <a href="https://github.com/CheshireMinded/WGC" style="color: #64b5f6; text-decoration: none;">View on GitHub</a> | 
-      <a href="https://cheshireminded.github.io/WGC" style="color: #64b5f6; text-decoration: none;">Live Demo</a>
-    </p>
-  </footer>
 
-  <script src="./app.js"></script>
+  <script src="../src/scripts/app.js"></script>
+  <script src="../src/scripts/components/shared-nav.js"></script>
   <script>
     // Service Worker Registration
     if ('serviceWorker' in navigator) {

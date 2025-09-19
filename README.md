@@ -2,6 +2,20 @@
 
 A comprehensive Progressive Web App (PWA) for military force calculations, battle analysis, and strategic planning. Built with modern web technologies and designed to work offline.
 
+## 🌐 Live Demo
+
+**[🚀 Try Troop Tools Live](https://cheshireminded.github.io/WGC/)** - Experience the full PWA with offline capabilities
+
+*Install as a PWA for the best experience on mobile and desktop*
+
+## 📸 Screenshots
+
+![Troop Tools Dashboard](https://via.placeholder.com/800x400/1e3a8a/ffffff?text=Troop+Tools+Dashboard)
+*Main dashboard with all calculator tools*
+
+![PWA Installation](https://via.placeholder.com/400x300/059669/ffffff?text=PWA+Installation)
+*Install prompt on mobile devices*
+
 ## 🚀 Features
 
 ### Core Tools
@@ -29,13 +43,13 @@ A comprehensive Progressive Web App (PWA) for military force calculations, battl
 ## 📱 Installation
 
 ### As PWA (Recommended)
-1. Visit the app in your browser
+1. Visit [the live demo](https://cheshireminded.github.io/WGC/) in your browser
 2. Look for the "Install" button or browser prompt
 3. Click "Install" to add to your device
 4. Access from your home screen or app drawer
 
 ### Browser Access
-Simply visit the deployed URL in any modern browser.
+Simply visit [the live demo](https://cheshireminded.github.io/WGC/) in any modern browser.
 
 ## 🔧 Development
 

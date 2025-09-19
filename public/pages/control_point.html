@@ -9,6 +9,7 @@
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
   <title>Military Force Calculator</title>
+  <link rel="stylesheet" href="../src/styles/styles.css">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -133,6 +134,7 @@
       margin-bottom: 10px;
     }
 
+
     .percentage-row input {
       width: 60px;
       padding: 5px;
@@ -239,15 +241,6 @@
   </style>
 </head>
 <body>
-  <nav role="navigation" aria-label="Main navigation">
-    <ul style="list-style: none; padding: 0; margin: 0; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; background: #1a1a2e; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
-      <li><a href="./" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">🏠 Home</a></li>
-      <li><a href="./troop_swap_calculator.html" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">⚔️ Troop Swap</a></li>
-      <li><a href="./battle_results.html" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">📊 Battle Results</a></li>
-      <li><a href="./control_point.html" style="color: #fff; text-decoration: none; padding: 8px 16px; border-radius: 4px; background: #0f3460; transition: background-color 0.3s;">🎯 Control Point</a></li>
-      <li><a href="./known_enemies.html" style="color: #64b5f6; text-decoration: none; padding: 8px 16px; border-radius: 4px; transition: background-color 0.3s;">👁️ Known Enemies</a></li>
-    </ul>
-  </nav>
 
   <div class="calculator">
     <h1>🎖️ Military Force Calculator</h1>
@@ -264,56 +257,38 @@
 
       <div class="troop-grid">
         <div class="troop-card">
-        <div class="troop-header">
-            <input type="checkbox" id="armyToggle" checked aria-labelledby="armyLabel"/>
-            <label id="armyLabel" for="armyToggle"><h4>🪖 Army</h4></label>
+          <div class="troop-header">
+            <h4>🪖 Army</h4>
+          </div>
+          <div class="input-group">
+            <label for="armyPercentage">Percentage:</label>
+            <input type="number" id="armyPercentage" value="40" min="0" max="100" inputmode="numeric" style="width: 100%;" />
+          </div>
+          <div class="troop-result" id="armyCount">Troop Count: 0</div>
         </div>
-        <div class="percentage-row">
-            <label for="armyPercentage" class="sr-only" style="position:absolute;left:-9999px;">Army percentage</label>
-            <input type="number" id="armyPercentage" value="40" min="0" max="100" inputmode="numeric" />
-          <span>%</span>
-        </div>
-          <div class="input-group" style="margin-top: 8px;">
-            <label for="armyCount" style="font-size: 0.85em; color: #ccc;">Troop Count:</label>
-            <input type="number" id="armyCount" value="0" min="0" inputmode="numeric" style="width: 100%; margin-top: 4px;" />
-        </div>
-          <div class="troop-result" id="armyResult" role="button" tabindex="0" onclick="copyTroopCount('army')" onkeypress="if(event.key==='Enter'){copyTroopCount('army')}">0 troops</div>
-      </div>
 
         <div class="troop-card">
-        <div class="troop-header">
-            <input type="checkbox" id="marinesToggle" checked aria-labelledby="marinesLabel"/>
-            <label id="marinesLabel" for="marinesToggle"><h4>⚓ Marines</h4></label>
+          <div class="troop-header">
+            <h4>⚓ Marines</h4>
+          </div>
+          <div class="input-group">
+            <label for="marinesPercentage">Percentage:</label>
+            <input type="number" id="marinesPercentage" value="30" min="0" max="100" inputmode="numeric" style="width: 100%;" />
+          </div>
+          <div class="troop-result" id="marinesCount">Troop Count: 0</div>
         </div>
-        <div class="percentage-row">
-            <label for="marinesPercentage" class="sr-only" style="position:absolute;left:-9999px;">Marines percentage</label>
-            <input type="number" id="marinesPercentage" value="30" min="0" max="100" inputmode="numeric" />
-          <span>%</span>
-        </div>
-          <div class="input-group" style="margin-top: 8px;">
-            <label for="marinesCount" style="font-size: 0.85em; color: #ccc;">Troop Count:</label>
-            <input type="number" id="marinesCount" value="0" min="0" inputmode="numeric" style="width: 100%; margin-top: 4px;" />
-        </div>
-          <div class="troop-result" id="marinesResult" role="button" tabindex="0" onclick="copyTroopCount('marines')" onkeypress="if(event.key==='Enter'){copyTroopCount('marines')}">0 troops</div>
-      </div>
 
         <div class="troop-card">
-        <div class="troop-header">
-            <input type="checkbox" id="airforceToggle" checked aria-labelledby="airforceLabel"/>
-            <label id="airforceLabel" for="airforceToggle"><h4>✈️ Air Force</h4></label>
+          <div class="troop-header">
+            <h4>✈️ Air Force</h4>
+          </div>
+          <div class="input-group">
+            <label for="airforcePercentage">Percentage:</label>
+            <input type="number" id="airforcePercentage" value="30" min="0" max="100" inputmode="numeric" style="width: 100%;" />
+          </div>
+          <div class="troop-result" id="airforceCount">Troop Count: 0</div>
         </div>
-        <div class="percentage-row">
-            <label for="airforcePercentage" class="sr-only" style="position:absolute;left:-9999px;">Air Force percentage</label>
-            <input type="number" id="airforcePercentage" value="30" min="0" max="100" inputmode="numeric" />
-          <span>%</span>
-        </div>
-          <div class="input-group" style="margin-top: 8px;">
-            <label for="airforceCount" style="font-size: 0.85em; color: #ccc;">Troop Count:</label>
-            <input type="number" id="airforceCount" value="0" min="0" inputmode="numeric" style="width: 100%; margin-top: 4px;" />
-        </div>
-          <div class="troop-result" id="airforceResult" role="button" tabindex="0" onclick="copyTroopCount('airforce')" onkeypress="if(event.key==='Enter'){copyTroopCount('airforce')}">0 troops</div>
       </div>
-    </div>
 
       <div class="percentage-status" id="percentageTotal" aria-live="polite">
         Total: 100%
@@ -423,6 +398,20 @@
       { key: "airforce", label: "Air Force" },
     ];
 
+    // Base power values for each unit type
+    const BASES = {
+      army: 100,
+      marines: 100,
+      airforce: 100
+    };
+
+    // Combat matrix for 3:1 matchup advantages
+    const COMBAT_MATRIX = {
+      army: { army: 1, marines: 3, airforce: 1/3 },
+      marines: { army: 1/3, marines: 1, airforce: 3 },
+      airforce: { army: 3, marines: 1/3, airforce: 1 }
+    };
+
     const els = {
       remainingDisplay: document.getElementById("remainingDisplay"),
       percentageTotal: document.getElementById("percentageTotal"),
@@ -435,6 +424,54 @@
       const v = document.getElementById(id).value.trim();
       const num = Number(v);
       return Number.isFinite(num) ? Math.trunc(num) : def;
+    }
+
+    // Core safe math helpers
+    /** Safe division: returns 0 if denom ~ 0 */
+    const safeDiv = (num, den) => (Math.abs(den) > 1e-12 ? num / den : 0);
+
+    /** Safe finite: coerce non-finite/NaN to 0 */
+    const finite = (x) => (Number.isFinite(x) ? x : 0);
+
+    /** Clamp percent sliders to [-50, 50] just in case */
+    const clampPct = (p) => clamp(toFloat(p), -50, 50);
+
+    /** Safe total troops: non-negative int within cap */
+    const toTroops = (v) => clamp(toCount(v), 0, MAX_TROOPS);
+
+    /** Safe float conversion */
+    const toFloat = (x) => {
+      const num = parseFloat(x);
+      return Number.isFinite(num) ? num : 0;
+    };
+
+    /** Safe count conversion */
+    const toCount = (x) => {
+      const num = parseInt(x);
+      return Number.isFinite(num) ? Math.max(0, Math.floor(num)) : 0;
+    };
+
+    // Harden perUnitPower against odd boosts
+    function perUnitPower(troop, boosts) {
+      const base = BASES[troop] || 100;
+
+      // clamp boosts to reasonable UI bounds
+      const a = clampPct(boosts?.attack);
+      const h = clampPct(boosts?.health);
+      const d = clampPct(boosts?.defense);
+
+      const atk = finite(base * (1 + a / 100));
+      const hp  = finite(base * (1 + h / 100));
+      const def = finite(base * (1 + d / 100));
+
+      // avoid tiny negative due to FP: max with 0
+      const effectivePower = finite((atk * hp * def) / (base * base));
+      return {
+        atk: Math.max(0, atk),
+        hp: Math.max(0, hp),
+        def: Math.max(0, def),
+        effectivePower: Math.max(0, effectivePower),
+      };
     }
 
     // Available troops management
@@ -570,43 +607,35 @@
       els.remainingDisplay.innerHTML =
         `Available for distribution: ${remainingTroops.toLocaleString()} troops <button id="editAvailableBtn" style="background: #6b7280; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 12px; margin-left: 10px;">Edit</button>`;
 
-      let states = getBranchState();
-      if (autoNormalize) states = normalizePercentages(states);
-
-      const totalPct = states.reduce((a, s) => a + (s.active ? s.pct : 0), 0);
+      // Get current percentages
+      const armyPct = readInt("armyPercentage", 0);
+      const marinesPct = readInt("marinesPercentage", 0);
+      const airforcePct = readInt("airforcePercentage", 0);
+      const totalPct = armyPct + marinesPct + airforcePct;
 
       // Status UI
       els.percentageTotal.textContent = `Total: ${totalPct}%` + (totalPct !== 100 ? " (automatically normalized)" : "");
       els.percentageTotal.className = `percentage-status ${totalPct === 100 ? "percentage-valid" : "percentage-invalid"}`;
 
-      // Copy functionality removed - no longer needed
-
-      // Allocation
-      const allocations = preciseAllocate(remainingTroops, states);
-      let distributed = 0;
-
-      BRANCHES.forEach(({ key }) => {
-        const active = states.find(s => s.key === key).active;
-        const count = allocations.get(key);
-        const resEl = document.getElementById(key + "Result");
-        resEl.textContent = active ? `${count.toLocaleString()} troops` : "Disabled";
-        distributed += count;
-
-        // Reflect normalized % back into inputs
-        document.getElementById(key + "Percentage").value =
-          states.find(s => s.key === key).pct;
-      });
-
+      // Calculate troop counts from percentages
+      const armyCount = Math.round((armyPct / 100) * remainingTroops);
+      const marinesCount = Math.round((marinesPct / 100) * remainingTroops);
+      const airforceCount = Math.round((airforcePct / 100) * remainingTroops);
+      
+      const distributed = armyCount + marinesCount + airforceCount;
       const unassigned = remainingTroops - distributed;
+
+      // Update troop count displays
+      document.getElementById("armyCount").textContent = `Troop Count: ${armyCount.toLocaleString()}`;
+      document.getElementById("marinesCount").textContent = `Troop Count: ${marinesCount.toLocaleString()}`;
+      document.getElementById("airforceCount").textContent = `Troop Count: ${airforceCount.toLocaleString()}`;
 
       // Summary
       els.totalDeployed.textContent = distributed.toLocaleString();
-      document.getElementById("armySummary").textContent = allocations.get("army").toLocaleString();
-      document.getElementById("marinesSummary").textContent = allocations.get("marines").toLocaleString();
-      document.getElementById("airforceSummary").textContent = allocations.get("airforce").toLocaleString();
+      document.getElementById("armySummary").textContent = armyCount.toLocaleString();
+      document.getElementById("marinesSummary").textContent = marinesCount.toLocaleString();
+      document.getElementById("airforceSummary").textContent = airforceCount.toLocaleString();
       els.remainingSummary.textContent = unassigned.toLocaleString();
-
-      updateCardStates(states);
     }
 
     function autoAdjustPercentages() {
@@ -680,9 +709,7 @@
 
     // Event listeners
     BRANCHES.forEach(({ key }) => {
-      document.getElementById(key + "Toggle").addEventListener("change", () => { autoAdjustPercentages(); updateCalculations(); });
       document.getElementById(key + "Percentage").addEventListener("input", () => {
-        autoCalculateTroopCounts();
         updateCalculations();
       });
     });
@@ -841,6 +868,292 @@
       return { army: avgArmy, marines: avgMarines, airforce: avgAirforce };
     }
 
+    // Harden summarizeSide
+    function summarizeSide(input) {
+      const types = ["army", "marines", "airforce"];
+      const powers = {};
+      let totalCount = 0;
+
+      for (const t of types) {
+        const b = input?.[t] || {};
+        const count = toTroops(b.count);
+        powers[t] = perUnitPower(t, b);
+        totalCount += count;
+      }
+      return { powers, totalCount };
+    }
+
+    // Harden computeBattleTotals
+    function computeBattleTotals(p1, p2) {
+      const types = ["army", "marines", "airforce"];
+      const p1Sum = summarizeSide(p1);
+      const p2Sum = summarizeSide(p2);
+
+      let p1TotalPower = 0;
+      let p2TotalPower = 0;
+
+      for (const t1 of types) {
+        for (const t2 of types) {
+          const c1 = toTroops(p1?.[t1]?.count);
+          const c2 = toTroops(p2?.[t2]?.count);
+          if (c1 <= 0 || c2 <= 0) continue;
+
+          const eff1 = finite(COMBAT_MATRIX[t1]?.[t2]) || 1;
+          const eff2 = finite(COMBAT_MATRIX[t2]?.[t1]) || 1;
+
+          p1TotalPower += finite(p1Sum.powers[t1].effectivePower * c1 * eff1);
+          p2TotalPower += finite(p2Sum.powers[t2].effectivePower * c2 * eff2);
+        }
+      }
+
+      p1TotalPower = Math.max(0, p1TotalPower);
+      p2TotalPower = Math.max(0, p2TotalPower);
+
+      const totalCombatPower = p1TotalPower + p2TotalPower;
+      if (totalCombatPower <= 0) {
+        return {
+          p1TotalPower: 0,
+          p2TotalPower: 0,
+          p1Advantage: 0.5,
+          p2Advantage: 0.5,
+          powerRatio: 1,
+          inversePowerRatio: 1,
+          p1TotalCount: p1Sum.totalCount,
+          p2TotalCount: p2Sum.totalCount,
+        };
+      }
+
+      const p1Advantage = safeDiv(p1TotalPower, totalCombatPower);
+      const p2Advantage = 1 - p1Advantage;
+
+      const powerRatio = p2TotalPower > 0 ? safeDiv(p1TotalPower, p2TotalPower) : 1;
+      const inversePowerRatio = p1TotalPower > 0 ? safeDiv(p2TotalPower, p1TotalPower) : 1;
+
+      return {
+        p1TotalPower, p2TotalPower,
+        p1Advantage, p2Advantage,
+        powerRatio, inversePowerRatio,
+        p1TotalCount: p1Sum.totalCount,
+        p2TotalCount: p2Sum.totalCount,
+      };
+    }
+
+    // Harden computeCasualties
+    function computeCasualties(p1, p2, totals) {
+      const types = ["army", "marines", "airforce"];
+      const { p1Advantage, p2Advantage, powerRatio, inversePowerRatio } = totals;
+
+      // clamp helper
+      const clampRate = (r) => clamp(finite(r), 0, 0.95);
+
+      let p1CasualtyRate, p2CasualtyRate;
+
+      if (powerRatio > 10) {
+        p1CasualtyRate = clampRate(0.1 * inversePowerRatio);
+        p2CasualtyRate = clampRate(0.4 + powerRatio * 0.02);
+      } else if (inversePowerRatio > 10) {
+        p2CasualtyRate = clampRate(0.1 * powerRatio);
+        p1CasualtyRate = clampRate(0.4 + inversePowerRatio * 0.02);
+      } else if (powerRatio > 3) {
+        p1CasualtyRate = clampRate(0.2 * inversePowerRatio);
+        p2CasualtyRate = clampRate(0.3 + powerRatio * 0.05);
+      } else if (inversePowerRatio > 3) {
+        p2CasualtyRate = clampRate(0.2 * powerRatio);
+        p1CasualtyRate = clampRate(0.3 + inversePowerRatio * 0.05);
+      } else {
+        p1CasualtyRate = clampRate((1 - p1Advantage) * 0.9);
+        p2CasualtyRate = clampRate((1 - p2Advantage) * 0.9);
+      }
+
+      const p1Casualties = { army: 0, marines: 0, airforce: 0 };
+      const p2Casualties = { army: 0, marines: 0, airforce: 0 };
+
+      for (const t of types) {
+        const c1 = toTroops(p1?.[t]?.count);
+        const c2 = toTroops(p2?.[t]?.count);
+        p1Casualties[t] = Math.min(c1, Math.floor(c1 * p1CasualtyRate));
+        p2Casualties[t] = Math.min(c2, Math.floor(c2 * p2CasualtyRate));
+      }
+
+      const p1Total = p1Casualties.army + p1Casualties.marines + p1Casualties.airforce;
+      const p2Total = p2Casualties.army + p2Casualties.marines + p2Casualties.airforce;
+
+      return {
+        p1Casualties, p2Casualties,
+        p1Total, p2Total,
+        p1CasualtyRate, p2CasualtyRate,
+      };
+    }
+
+    /** Advisor: compute weights from enemy threats; size to any total (default MAX_TROOPS)
+     *  Control-point realistic: applies 3:1 matchup multipliers to weights (mirrors battle matrix).
+     */
+    function computeCounterAdvice(enemy, friendlyTotal = MAX_TROOPS) {
+      const types = ["army", "marines", "airforce"];
+      const enemyPower = summarizeSide(enemy).powers;
+
+      const threats = {
+        army:     toTroops(enemy?.army?.count)     * enemyPower.army.effectivePower,
+        marines:  toTroops(enemy?.marines?.count)  * enemyPower.marines.effectivePower,
+        airforce: toTroops(enemy?.airforce?.count) * enemyPower.airforce.effectivePower,
+      };
+
+      const weights = {
+        marines:  finite(threats.airforce) * 3, // counter Air
+        airforce: finite(threats.army)     * 3, // counter Army
+        army:     finite(threats.marines)  * 3, // counter Marines
+      };
+
+      const sumW = finite(weights.army + weights.marines + weights.airforce);
+
+      const exactPct = sumW > 0 ? {
+        army:     (weights.army     / sumW) * 100,
+        marines:  (weights.marines  / sumW) * 100,
+        airforce: (weights.airforce / sumW) * 100,
+      } : { army: 100/3, marines: 100/3, airforce: 100/3 };
+
+      const rounded = {
+        army:     Math.floor(finite(exactPct.army)),
+        marines:  Math.floor(finite(exactPct.marines)),
+        airforce: Math.floor(finite(exactPct.airforce)),
+      };
+
+      let remainder = 100 - (rounded.army + rounded.marines + rounded.airforce);
+      if (remainder > 0) {
+        const order = Object.entries(weights).sort((a, b) => b[1] - a[1]).map(([k]) => k);
+        let i = 0;
+        while (remainder-- > 0 && order.length) {
+          rounded[order[i % order.length]] += 1;
+          i++;
+        }
+      }
+
+      const total = toTroops(friendlyTotal);
+      const counts = {
+        army:     Math.floor((rounded.army     / 100) * total),
+        marines:  Math.floor((rounded.marines  / 100) * total),
+        airforce: Math.floor((rounded.airforce / 100) * total),
+      };
+
+      const allocated = counts.army + counts.marines + counts.airforce;
+      const troopRemainder = total - allocated;
+      if (troopRemainder > 0) {
+        const top = Object.entries(weights).sort((a, b) => b[1] - a[1])[0]?.[0] || "army";
+        counts[top] += troopRemainder;
+      }
+
+      return { percentages: rounded, counts, threats, weights, total };
+    }
+
+    // DOM adapter safety
+    function readForm(playerNum) {
+      const p = `p${playerNum}`;
+      const val = (id) => document.getElementById(id)?.value;
+
+      return {
+        army:     { count: toTroops(val(`${p}-army`)),
+                    attack: clampPct(val(`${p}-army-attack`)),
+                    health: clampPct(val(`${p}-army-health`)),
+                    defense: clampPct(val(`${p}-army-defense`)) },
+        marines:  { count: toTroops(val(`${p}-marines`)),
+                    attack: clampPct(val(`${p}-marines-attack`)),
+                    health: clampPct(val(`${p}-marines-health`)),
+                    defense: clampPct(val(`${p}-marines-defense`)) },
+        airforce: { count: toTroops(val(`${p}-airforce`)),
+                    attack: clampPct(val(`${p}-airforce-attack`)),
+                    health: clampPct(val(`${p}-airforce-health`)),
+                    defense: clampPct(val(`${p}-airforce-defense`)) },
+      };
+    }
+
+    // Safe DOM setter
+    const set = (id, txt) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = String(txt);
+    };
+
+    // Event wiring guard
+    function wireUI() {
+      try {
+        // Initialize inputs safely
+        const initInputs = () => {
+          const inputs = ['enemyArmyCount', 'enemyMarinesCount', 'enemyAirforceCount'];
+          inputs.forEach(id => {
+            const input = document.getElementById(id);
+            if (input) {
+              input.addEventListener('input', calculateEnemyDistribution);
+              input.addEventListener('change', calculateEnemyDistribution);
+            }
+          });
+        };
+        initInputs();
+      } catch (e) {
+        console.warn('Error initializing inputs:', e);
+      }
+
+      // Battle simulation button
+      const commence = document.getElementById('commence');
+      commence?.addEventListener('click', () => {
+        try {
+          const p1 = readForm(1);
+          const p2 = readForm(2);
+          const totals = computeBattleTotals(p1, p2);
+          const casualties = computeCasualties(p1, p2, totals);
+          
+          // Update UI with safe setters
+          set('p1-power', Math.round(totals.p1TotalPower).toLocaleString());
+          set('p2-power', Math.round(totals.p2TotalPower).toLocaleString());
+          set('p1-advantage', Math.round(totals.p1Advantage * 100) + '%');
+          set('p2-advantage', Math.round(totals.p2Advantage * 100) + '%');
+          set('p1-casualties', casualties.p1Total.toLocaleString());
+          set('p2-casualties', casualties.p2Total.toLocaleString());
+        } catch (e) {
+          console.error('Error in battle simulation:', e);
+        }
+      });
+
+      // Counter strategy buttons
+      const p1Btn = document.getElementById('p1-counter-btn');
+      p1Btn?.addEventListener('click', () => {
+        try {
+          const enemy = readForm(2);
+          const total = toTroops(document.getElementById('p1-army')?.value) +
+                       toTroops(document.getElementById('p1-marines')?.value) +
+                       toTroops(document.getElementById('p1-airforce')?.value) || MAX_TROOPS;
+          const advice = computeCounterAdvice(enemy, total);
+          const box = document.getElementById('p1-counter-strategy');
+          if (box) {
+            box.textContent = 
+              `Recommended: Army ${advice.counts.army.toLocaleString()} (${advice.percentages.army}%), ` +
+              `Marines ${advice.counts.marines.toLocaleString()} (${advice.percentages.marines}%), ` +
+              `Air ${advice.counts.airforce.toLocaleString()} (${advice.percentages.airforce}%).`;
+          }
+        } catch (e) {
+          console.error('Error in P1 counter strategy:', e);
+        }
+      });
+
+      const p2Btn = document.getElementById('p2-counter-btn');
+      p2Btn?.addEventListener('click', () => {
+        try {
+          const enemy = readForm(1);
+          const total = toTroops(document.getElementById('p2-army')?.value) +
+                       toTroops(document.getElementById('p2-marines')?.value) +
+                       toTroops(document.getElementById('p2-airforce')?.value) || MAX_TROOPS;
+          const advice = computeCounterAdvice(enemy, total);
+          const box = document.getElementById('p2-counter-strategy');
+          if (box) {
+            box.textContent = 
+              `Recommended: Army ${advice.counts.army.toLocaleString()} (${advice.percentages.army}%), ` +
+              `Marines ${advice.counts.marines.toLocaleString()} (${advice.percentages.marines}%), ` +
+              `Air ${advice.counts.airforce.toLocaleString()} (${advice.percentages.airforce}%).`;
+          }
+        } catch (e) {
+          console.error('Error in P2 counter strategy:', e);
+        }
+      });
+    }
+
     function generateCounterStrategy() {
       const armyInput = document.getElementById('enemyArmyCount');
       const marinesInput = document.getElementById('enemyMarinesCount');
@@ -898,12 +1211,19 @@
         });
       }
       
-      // Calculate recommended percentages based on enemy composition
-      let recommendedArmy = 33;
-      let recommendedMarines = 33;
-      let recommendedAirforce = 34;
+      // Use the new computeCounterAdvice function with 3:1 matchup multipliers
+      const enemy = {
+        army: { count: armyCount },
+        marines: { count: marinesCount },
+        airforce: { count: airforceCount }
+      };
       
-      // Use custom strategy if available
+      // Get available troops for sizing (use control-point pool if available)
+      const availableTroops = getAvailableTroops();
+      const advice = computeCounterAdvice(enemy, availableTroops);
+      
+      // Use custom strategy if available, otherwise use the new advice
+      let recommendedArmy, recommendedMarines, recommendedAirforce;
       if (customStrategy) {
         recommendedArmy = customStrategy.army;
         recommendedMarines = customStrategy.marines;
@@ -914,45 +1234,17 @@
         recommendedMarines = learnedStrategy.marines;
         recommendedAirforce = learnedStrategy.airforce;
       } else {
-        // Default strategy logic - adjust recommendations based on enemy strengths
-        if (armyPercent > 40) {
-          // Enemy has strong Army - increase Air Force
-          recommendedArmy = 20;
-          recommendedMarines = 30;
-          recommendedAirforce = 50;
-        } else if (marinesPercent > 40) {
-          // Enemy has strong Marines - increase Army
-          recommendedArmy = 50;
-          recommendedMarines = 20;
-          recommendedAirforce = 30;
-        } else if (airforcePercent > 40) {
-          // Enemy has strong Air Force - increase Marines
-          recommendedArmy = 30;
-          recommendedMarines = 50;
-          recommendedAirforce = 20;
-        } else if (armyPercent > 30) {
-          // Enemy has moderate Army strength - slightly favor Air Force
-          recommendedArmy = 25;
-          recommendedMarines = 35;
-          recommendedAirforce = 40;
-        } else if (marinesPercent > 30) {
-          // Enemy has moderate Marine strength - slightly favor Army
-          recommendedArmy = 40;
-          recommendedMarines = 25;
-          recommendedAirforce = 35;
-        } else if (airforcePercent > 30) {
-          // Enemy has moderate Air Force strength - slightly favor Marines
-          recommendedArmy = 35;
-          recommendedMarines = 40;
-          recommendedAirforce = 25;
-        }
+        // Use the new matrix-aware advice
+        recommendedArmy = advice.percentages.army;
+        recommendedMarines = advice.percentages.marines;
+        recommendedAirforce = advice.percentages.airforce;
       }
       
       // Generate counter strategy HTML
-      let html = '<h4 style="color: #64b5f6; margin-top: 0;">🎯 Recommended Counter-Attack Force Distribution</h4>';
+      let html = '<h4 style="color: #64b5f6; margin-top: 0;">Recommended Counter-Attack Force Distribution</h4>';
       
       html += '<div style="background: #374151; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #10b981;">';
-      html += '<h5 style="color: #10b981; margin-top: 0;">📊 Your Recommended Troop Percentages:</h5>';
+      html += '<h5 style="color: #10b981; margin-top: 0;">Your Recommended Troop Percentages:</h5>';
       html += `<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin: 10px 0;">`;
       html += `<div style="text-align: center; padding: 8px; background: #1f2937; border-radius: 5px;">`;
       html += `<div style="color: #ff4d4d; font-weight: bold;">🪖 Army</div>`;
@@ -967,6 +1259,18 @@
       html += `<div style="font-size: 18px; font-weight: bold; color: #fff;">${recommendedAirforce}%</div>`;
       html += `</div>`;
       html += `</div>`;
+      
+      // Add explanation of the new 3:1 matchup system if using the new advice
+      if (!customStrategy && !learnedStrategy) {
+        html += '<div style="margin-top: 15px; padding: 10px; background: #1f2937; border-radius: 5px; border-left: 3px solid #64b5f6;">';
+        html += '<h6 style="color: #64b5f6; margin: 0 0 8px 0; font-size: 14px;">Smart Counter Strategy (3:1 Matchup Advantage)</h6>';
+        html += '<p style="color: #ccc; margin: 0; font-size: 12px; line-height: 1.4;">';
+        html += 'This recommendation uses the actual battle matrix: Marines counter Air Force (3:1), Air Force counters Army (3:1), Army counters Marines (3:1). ';
+        html += 'The system analyzes enemy threats and recommends the optimal counter-mix based on your available troops.';
+        html += '</p>';
+        html += '</div>';
+      }
+      
       html += '</div>';
       
       // Determine primary strategy (highest percentage)
@@ -981,7 +1285,7 @@
       
       // Add strategy explanation
       html += '<div style="background: #374151; padding: 15px; margin: 10px 0; border-radius: 8px; border-left: 4px solid #3b82f6;">';
-      html += '<h5 style="color: #64b5f6; margin-top: 0;">🎯 Strategy Rationale:</h5>';
+      html += '<h5 style="color: #64b5f6; margin-top: 0;">Strategy Rationale:</h5>';
       
       // Add learning indicator if using battle history
       if (learnedStrategy) {
@@ -1086,10 +1390,7 @@
           document.getElementById('marinesPercentage').value = recommendedMarines;
           document.getElementById('airforcePercentage').value = recommendedAirforce;
           
-          // Auto-calculate troop counts based on new percentages
-          autoCalculateTroopCounts();
-          
-          // Trigger the calculation to update troop counts
+          // Update calculations with new percentages
           updateCalculations();
           
           // Show success message
@@ -1189,8 +1490,6 @@
         document.getElementById('airforcePercentage').value = newAirforce;
         
         // Auto-calculate troop counts based on new percentages
-        autoCalculateTroopCounts();
-        
         updateCalculations();
         
         // Close modal
@@ -1239,39 +1538,7 @@
     }
 
 
-    // Auto-calculate troop counts from pre-loaded percentages
-    function autoCalculateTroopCounts() {
-      const availableTroops = getAvailableTroops();
-      console.log('Auto-calculating troop counts with available troops:', availableTroops);
-      console.log('BRANCHES array:', BRANCHES);
-      
-      BRANCHES.forEach(({ key }) => {
-        const percentageElement = document.getElementById(key + "Percentage");
-        const countElement = document.getElementById(key + "Count");
-        
-        console.log(`Looking for elements: ${key}Percentage and ${key}Count`);
-        console.log(`Percentage element:`, percentageElement);
-        console.log(`Count element:`, countElement);
-        
-        if (percentageElement && countElement) {
-          const percentage = readInt(key + "Percentage", 0);
-          const troopCount = Math.round((percentage / 100) * availableTroops);
-          
-          console.log(`${key}: ${percentage}% = ${troopCount} troops`);
-          console.log(`Setting ${key}Count value to:`, troopCount);
-          
-          countElement.value = troopCount;
-          
-          // Trigger input event to update any dependent calculations
-          countElement.dispatchEvent(new Event('input', { bubbles: true }));
-        } else {
-          console.error(`Elements not found for ${key}:`, {
-            percentageElement: !!percentageElement,
-            countElement: !!countElement
-          });
-        }
-      });
-    }
+
 
     // First render
     updateCalculations();
@@ -1293,12 +1560,14 @@
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', () => {
         console.log('DOM fully loaded, running auto-calculate...');
+        wireUI(); // Initialize safe event wiring
         autoCalculateTroopCounts();
         setupBattleDataListener();
       });
     } else {
       // DOM is already loaded
       console.log('DOM already loaded, running auto-calculate immediately...');
+      wireUI(); // Initialize safe event wiring
       autoCalculateTroopCounts();
       setupBattleDataListener();
     }
@@ -1416,5 +1685,6 @@
       return 0;
     }
 </script>
+  <script src="../src/scripts/components/shared-nav.js"></script>
 </body>
 </html>

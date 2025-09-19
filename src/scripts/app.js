@@ -146,11 +146,13 @@ function playerTemplate(i){
       <button class="secondary remove-player-btn" type="button" data-player-id="${sanitizedI}">Remove</button>
     </div>
     <div class="flex-row" style="margin-top:6px;">
-      <input type="text" class="name-input" id="name${sanitizedI}" placeholder="Player Name" maxlength="50" />
-      <label>Current Deployment:</label><input type="number" id="size${sanitizedI}" value="500000" min="0" max="10000000" inputmode="numeric" />
-      <span class="troop-label army">Army</span><input type="number" id="army${sanitizedI}" value="50" min="0" max="100" inputmode="numeric" />
-      <span class="troop-label marines">Marines</span><input type="number" id="marines${sanitizedI}" value="0" min="0" max="100" inputmode="numeric" />
-      <span class="troop-label airforce">Air Force</span><input type="number" id="airforce${sanitizedI}" value="50" min="0" max="100" inputmode="numeric" />
+      <input type="text" class="name-input" id="name${sanitizedI}" placeholder="Player Name" maxlength="50" style="width: 200px;" />
+      <label>Current Deployment:</label><input type="number" id="size${sanitizedI}" value="500000" min="0" max="10000000" inputmode="numeric" style="width: 150px;" />
+    </div>
+    <div class="flex-row" style="margin-top:6px;">
+      <span class="troop-label army">Army</span><input type="number" id="army${sanitizedI}" value="50" min="0" max="100" inputmode="numeric" style="width: 80px;" />
+      <span class="troop-label marines">Marines</span><input type="number" id="marines${sanitizedI}" value="0" min="0" max="100" inputmode="numeric" style="width: 80px;" />
+      <span class="troop-label airforce">Air Force</span><input type="number" id="airforce${sanitizedI}" value="50" min="0" max="100" inputmode="numeric" style="width: 80px;" />
     </div>
     <div class="troop-count" id="count${sanitizedI}" aria-live="polite"></div>
     <div style="position:relative; display:inline-block;">

@@ -4,7 +4,7 @@
 title: "Troop Tools - Military Calculator Suite"
 description: "Comprehensive military force calculator suite for troop management, battle analysis, and strategic planning. Works offline with full PWA support."
 url: "https://yourusername.github.io"
-baseurl: "/Zil"
+baseurl: "/WGC"
 
 # Build settings
 markdown: kramdown

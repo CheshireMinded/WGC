@@ -4,18 +4,24 @@
   "description": "Military Calculator Suite - Progressive Web App",
   "main": "index.html",
   "scripts": {
-    "build": "node build.js",
+    "build": "node scripts/build.js",
     "minify": "npm run minify:css && npm run minify:js",
     "minify:css": "npx clean-css-cli -o dist/styles.css styles.css",
     "minify:js": "npx terser app.js -o dist/app.js -c -m",
-    "serve": "python3 -m http.server 8000",
+    "serve": "cd public && python3 -m http.server 8000",
+    "lint": "npm run lint:js && npm run lint:css && npm run lint:html",
+    "lint:js": "eslint src/scripts/**/*.js public/service-worker.js",
+    "lint:css": "stylelint src/styles/**/*.css",
+    "lint:html": "html-validate public/**/*.html",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "npm run test:lighthouse && npm run test:accessibility",
     "test:lighthouse": "lighthouse http://localhost:8000 --output=json --output-path=./lighthouse-results.json",
     "test:accessibility": "axe http://localhost:8000",
     "validate": "npm run validate:html && npm run validate:css && npm run validate:js",
-    "validate:html": "npx html-validate *.html",
-    "validate:css": "npx stylelint styles.css",
-    "validate:js": "npx eslint app.js"
+    "validate:html": "npx html-validate public/**/*.html",
+    "validate:css": "npx stylelint src/styles/**/*.css",
+    "validate:js": "npx eslint src/scripts/**/*.js public/service-worker.js"
   },
   "keywords": [
     "military",
@@ -33,6 +39,7 @@
     "eslint": "^8.55.0",
     "html-validate": "^8.7.0",
     "lighthouse": "^11.4.0",
+    "prettier": "^3.1.0",
     "stylelint": "^16.0.0",
     "terser": "^5.24.0"
   },
