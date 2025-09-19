@@ -1,0 +1,69 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: |
+        npm install -g lighthouse
+        npm install -g @axe-core/cli
+    
+    - name: Run Lighthouse CI
+      run: |
+        lighthouse http://localhost:8000 --output=json --output-path=./lighthouse-results.json --chrome-flags="--headless" || true
+    
+    - name: Run Accessibility Tests
+      run: |
+        axe http://localhost:8000 --exit || true
+    
+    - name: Validate HTML
+      run: |
+        npx html-validate *.html || true
+    
+    - name: Validate CSS
+      run: |
+        npx stylelint styles.css || true
+    
+    - name: Validate JavaScript
+      run: |
+        npx eslint app.js || true
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: '.'
+    
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4

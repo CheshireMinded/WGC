@@ -42,8 +42,8 @@ Simply visit the deployed URL in any modern browser.
 ### Local Development
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/Zil.git
-cd Zil
+git clone https://github.com/CheshireMinded/WGC.git
+cd WGC
 
 # Serve locally (Python 3)
 python -m http.server 8000
@@ -57,21 +57,32 @@ No build process required - the app is pure HTML/CSS/JavaScript.
 
 ## 🚀 Deployment
 
-### GitHub Pages
+### GitHub Pages (Current)
 1. Push code to GitHub repository
 2. Enable GitHub Pages in repository settings
 3. Select source branch (usually `main`)
-4. Access at `https://yourusername.github.io/Zil`
+4. Access at `https://cheshireminded.github.io/WGC`
 
-### Netlify
+**Note**: GitHub Pages ignores `.htaccess` and `_redirects` files. For full security headers support, consider Netlify or Cloudflare Pages.
+
+### Netlify (Recommended)
 1. Connect GitHub repository to Netlify
 2. Deploy automatically on push
-3. Custom domain support available
+3. Full security headers support via `_headers` file
+4. Custom domain support available
+
+### Cloudflare Pages
+1. Connect GitHub repository to Cloudflare Pages
+2. Configure security headers in dashboard
+3. Global CDN for optimal performance
+4. Deploy automatically on push
 
 ### Vercel
 1. Import GitHub repository to Vercel
 2. Deploy with zero configuration
 3. Automatic HTTPS and CDN
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed hosting comparison and migration guide.
 
 ## 🔒 Security Features
 

@@ -2,7 +2,7 @@
   "name": "Troop Tools - Military Calculator Suite",
   "short_name": "TroopTools",
   "description": "Comprehensive military force calculator suite for troop management, battle analysis, and strategic planning",
-  "start_url": "./",
+  "start_url": "./?source=pwa",
   "scope": "./",
   "id": "troop-tools-military-calculator",
   "display": "standalone",

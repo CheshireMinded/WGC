@@ -1,4 +1,4 @@
-const CACHE_VERSION = "troop-tools-v3";
+const CACHE_VERSION = "troop-tools-v6";
 const STATIC_CACHE = `${CACHE_VERSION}-static`;
 const DYNAMIC_CACHE = `${CACHE_VERSION}-dynamic`;
 const IMAGE_CACHE = `${CACHE_VERSION}-images`;
@@ -113,6 +113,16 @@ self.addEventListener('fetch', (event) => {
 
   // Skip chrome-extension and other non-http requests
   if (!url.protocol.startsWith('http')) {
+    return;
+  }
+
+  // Only handle same-origin requests for security
+  if (url.origin !== location.origin) {
+    return;
+  }
+
+  // Skip opaque requests (CORS, etc.)
+  if (request.mode === 'no-cors') {
     return;
   }
 
