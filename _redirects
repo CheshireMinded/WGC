@@ -1,0 +1,13 @@
+# Netlify redirects (for alternative deployment)
+# Fallback for SPA routing
+/*    /index.html   200
+
+# PWA redirects
+/manifest.json    /manifest.webmanifest    301
+/app.manifest     /manifest.webmanifest    301
+
+# Legacy redirects
+/troop-calculator    /troop_swap_calculator.html    301
+/battle-tracker      /battle_results.html           301
+/control-points      /control_point.html            301
+/enemy-tracker       /known_enemies.html            301

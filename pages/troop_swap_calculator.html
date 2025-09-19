@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Troop Swap Calculator - Troop Tools</title>
+  <link rel="stylesheet" href="../src/styles/styles.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #1a1a2e;
+      color: white;
+    }
+
+    .container {
+      background: #16213e;
+      padding: 30px;
+      border-radius: 15px;
+      border: 1px solid #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #64b5f6;
+      margin-bottom: 30px;
+    }
+
+    .section {
+      background: #0f3460;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+    }
+
+    .section h2 {
+      color: #64b5f6;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .section h3 {
+      color: #64b5f6;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+
+    .input-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+
+    .flex-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+    }
+
+    .flex-row label {
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    input[type="number"], input[type="text"] {
+      padding: 8px;
+      border: 1px solid #555;
+      border-radius: 4px;
+      background: #2a2a3e;
+      color: white;
+      font-size: 14px;
+    }
+
+    input[type="number"]:focus, input[type="text"]:focus {
+      outline: none;
+      border-color: #64b5f6;
+      box-shadow: 0 0 5px rgba(100, 181, 246, 0.3);
+    }
+
+    .troop-label {
+      font-weight: bold;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .troop-label.army {
+      background: #ff4d4d;
+      color: white;
+    }
+
+    .troop-label.marines {
+      background: #4da6ff;
+      color: white;
+    }
+
+    .troop-label.airforce {
+      background: #33cc33;
+      color: white;
+    }
+
+    button {
+      background: #64b5f6;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    button:hover {
+      background: #5a9fd4;
+    }
+
+    button:disabled {
+      background: #666;
+      cursor: not-allowed;
+    }
+
+    button.secondary {
+      background: #6b7280;
+    }
+
+    button.secondary:hover {
+      background: #5a6268;
+    }
+
+    .small {
+      font-size: 0.9em;
+      color: #ccc;
+      margin-top: 10px;
+    }
+
+    .pill {
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: bold;
+    }
+
+    .pill.ok {
+      background: #10b981;
+      color: white;
+    }
+
+    .tooltip {
+      position: absolute;
+      background: #1a1a2e;
+      color: #10b981;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 0.8em;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 1000;
+    }
+
+    .tooltip.show {
+      opacity: 1;
+    }
+
+    .bar-container {
+      display: flex;
+      height: 20px;
+      background: #333;
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 5px 0;
+    }
+
+    .bar {
+      height: 100%;
+      transition: width 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: bold;
+      color: white;
+    }
+
+    .bar.army {
+      background: #ff4d4d;
+    }
+
+    .bar.marines {
+      background: #4da6ff;
+    }
+
+    .bar.airforce {
+      background: #33cc33;
+    }
+
+    .bar.orig {
+      opacity: 0.7;
+    }
+
+    .bar-row {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    .player {
+      background: #1a1a2e;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-bottom: 15px;
+    }
+
+    .player strong {
+      color: #64b5f6;
+    }
+
+    .name-input {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .troop-count {
+      margin: 10px 0;
+      padding: 8px;
+      background: #0f3460;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.9em;
+    }
+
+    .copy-player-btn {
+      background: #10b981;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+
+    .copy-player-btn:hover {
+      background: #059669;
+    }
+
+    .remove-player-btn {
+      background: #ef4444;
+      font-size: 12px;
+      padding: 6px 12px;
+    }
+
+    .remove-player-btn:hover {
+      background: #dc2626;
+    }
+
+    @media (max-width: 768px) {
+      .flex-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .flex-row input {
+        width: 100%;
+      }
+      
+      .troop-label {
+        align-self: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>⚔️ Troop Swap Calculator</h1>
+
+    <div class="section" aria-live="polite">
+      <h2>Initial Alliance Ratio <span id="initStatus" class="pill ok" style="display:none">normalized</span></h2>
+      <div class="flex-row">
+        <span class="troop-label army">Army</span><input type="number" id="initArmy" value="34" min="0" max="100" inputmode="numeric" />
+        <span class="troop-label marines">Marines</span><input type="number" id="initMarines" value="33" min="0" max="100" inputmode="numeric" />
+        <span class="troop-label airforce">Air Force</span><input type="number" id="initAirforce" value="33" min="0" max="100" inputmode="numeric" />
+      </div>
+      <p class="small">Total Deployment: <strong id="totalDeploymentText">6,462,500</strong> troops</p>
+    </div>
+
+    <div class="section">
+      <div class="flex-row" style="justify-content:space-between; gap:10px;">
+        <h2>Swapped Players</h2>
+        <div class="flex-row" style="gap:6px;">
+          <button id="addBtn">Add Player Swap</button>
+          <button class="secondary" id="removeBtn" disabled>Remove Last</button>
+        </div>
+      </div>
+      <div id="playersContainer"></div>
+    </div>
+
+    <div class="section">
+      <h2>Manual Alliance Total Override</h2>
+      <div class="flex-row">
+        <label for="currentTotal">Current Total Deployed:</label>
+        <input type="number" id="currentTotal" value="6462500" min="0" inputmode="numeric" style="width: 200px; font-size: 16px; font-weight: bold;" />
+        <button id="calculateNeededBtn">Calculate Needed</button>
+      </div>
+      <div id="neededResult" style="margin-top:8px; position: relative;">
+        <span id="neededTooltip" class="tooltip">Copied!</span>
+      </div>
+      <p class="small">Uses the <em>initial alliance ratio</em> to suggest how to fill the gap.</p>
+    </div>
+
+    <div class="flex-row" style="gap:8px; margin-bottom:8px;">
+      <button id="calculateBtn">Calculate New Ratio</button>
+      <button class="secondary" id="resetBtn">Clear Chart</button>
+    </div>
+
+    <div class="section result" id="result" aria-live="polite"></div>
+
+    <div class="section">
+      <h2>Alliance Ratio Visualization</h2>
+      <div class="flex-row" style="gap:15px; margin-bottom:15px;">
+        <label><input type="checkbox" id="showOriginal" checked> Original</label>
+        <label><input type="checkbox" id="showBackground" checked> Background</label>
+      </div>
+      
+      <div class="bar-row">Army</div>
+      <div class="bar-container">
+        <div class="bar army orig" id="barArmyOrig" style="width:0%"></div>
+        <div class="bar army" id="barArmyNew" style="width:0%"></div>
+      </div>
+      
+      <div class="bar-row">Marines</div>
+      <div class="bar-container">
+        <div class="bar marines orig" id="barMarinesOrig" style="width:0%"></div>
+        <div class="bar marines" id="barMarinesNew" style="width:0%"></div>
+      </div>
+
+      <div class="bar-row">Air Force</div>
+      <div class="bar-container">
+        <div class="bar airforce orig" id="barAirforceOrig" style="width:0%"></div>
+        <div class="bar airforce" id="barAirforceNew" style="width:0%"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../src/scripts/app.js?v=2"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service-worker.js').then(registration => {
+        console.log('SW registered: ', registration);
+        
+        registration.addEventListener('updatefound', () => {
+          const newWorker = registration.installing;
+          newWorker.addEventListener('statechange', () => {
+            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+              if (confirm('New version available! Reload to update?')) {
+                newWorker.postMessage({ type: 'SKIP_WAITING' });
+                window.location.reload();
+              }
+            }
+          });
+        });
+      })
+      .catch(registrationError => {
+        console.log('SW registration failed: ', registrationError);
+      });
+    }
+  </script>
+  <script src="../src/scripts/components/shared-nav.js"></script>
+</body>
+</html>
