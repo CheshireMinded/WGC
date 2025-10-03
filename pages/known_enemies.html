@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self';">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta http-equiv="X-Frame-Options" content="DENY">
   <meta http-equiv="X-XSS-Protection" content="1; mode=block">
@@ -129,7 +131,8 @@
       font-size: 1.1em;
     }
 
-    .stat-card input, .stat-card select {
+    .stat-card input,
+    .stat-card select {
       width: 100%;
       padding: 8px;
       border: 1px solid #555;
@@ -285,7 +288,8 @@
         padding: 15px;
       }
 
-      .troop-grid, .stats-grid {
+      .troop-grid,
+      .stats-grid {
         grid-template-columns: 1fr;
         gap: 10px;
       }
@@ -298,7 +302,8 @@
       .button-group button {
         width: 100%;
         padding: 12px;
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px;
+        /* Prevents zoom on iOS */
       }
 
       .input-with-button {
@@ -311,22 +316,28 @@
         gap: 8px;
       }
 
-      .troop-card, .stat-card {
+      .troop-card,
+      .stat-card {
         padding: 12px;
       }
 
-      .troop-card input, .stat-card input, .stat-card select {
-        font-size: 16px; /* Prevents zoom on iOS */
+      .troop-card input,
+      .stat-card input,
+      .stat-card select {
+        font-size: 16px;
+        /* Prevents zoom on iOS */
         padding: 10px;
       }
 
       .search-input {
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px;
+        /* Prevents zoom on iOS */
         padding: 12px;
       }
 
       textarea {
-        font-size: 16px; /* Prevents zoom on iOS */
+        font-size: 16px;
+        /* Prevents zoom on iOS */
         padding: 12px;
       }
 
@@ -342,12 +353,16 @@
     /* Touch-friendly improvements */
     @media (hover: none) and (pointer: coarse) {
       button {
-        min-height: 44px; /* iOS touch target minimum */
+        min-height: 44px;
+        /* iOS touch target minimum */
         min-width: 44px;
       }
 
-      input, select, textarea {
-        min-height: 44px; /* iOS touch target minimum */
+      input,
+      select,
+      textarea {
+        min-height: 44px;
+        /* iOS touch target minimum */
       }
 
       .troop-result {
@@ -359,6 +374,7 @@
     }
   </style>
 </head>
+
 <body>
 
   <div class="container">
@@ -445,7 +461,9 @@
       <h3>What They Hit With</h3>
       <div class="input-group">
         <label for="attackComposition">Attack Composition:</label>
-        <textarea id="attackComposition" placeholder="Describe what troops this enemy typically uses for attacks (e.g., 'Heavy on T3 Artillery and T2 Attack Helicopters, minimal Navy')..." style="width: 100%; padding: 15px; border: 1px solid #555; border-radius: 8px; background: #2a2a3e; color: white; min-height: 80px; resize: vertical;"></textarea>
+        <textarea id="attackComposition"
+          placeholder="Describe what troops this enemy typically uses for attacks (e.g., 'Heavy on T3 Artillery and T2 Attack Helicopters, minimal Navy')..."
+          style="width: 100%; padding: 15px; border: 1px solid #555; border-radius: 8px; background: #2a2a3e; color: white; min-height: 80px; resize: vertical;"></textarea>
       </div>
     </div>
 
@@ -571,11 +589,13 @@
 
     <div class="section">
       <h3>Additional Notes</h3>
-      <textarea id="enemyNotes" placeholder="Additional notes about this enemy (strategy, weaknesses, strengths, etc.)..." style="width: 100%; padding: 15px; border: 1px solid #555; border-radius: 8px; background: #2a2a3e; color: white; min-height: 100px; resize: vertical;"></textarea>
+      <textarea id="enemyNotes"
+        placeholder="Additional notes about this enemy (strategy, weaknesses, strengths, etc.)..."
+        style="width: 100%; padding: 15px; border: 1px solid #555; border-radius: 8px; background: #2a2a3e; color: white; min-height: 100px; resize: vertical;"></textarea>
     </div>
 
     <div class="button-group">
-      <button onclick="saveEnemy()" class="success">💾 Save Enemy Info</button>
+      <button onclick="saveEnemyWithValidation()" class="success">💾 Save Enemy Info</button>
       <button onclick="exportEnemiesToCSV()" class="secondary">📊 Export to CSV</button>
       <button onclick="clearForm()" class="secondary">🗑️ Clear Form</button>
     </div>
@@ -592,7 +612,7 @@
     function sanitizeInput(input) {
       if (typeof input !== 'string') return input;
       return input
-        .replace(/[<>\"'&]/g, function(match) {
+        .replace(/[<>\"'&]/g, function (match) {
           const escape = {
             '<': '&lt;',
             '>': '&gt;',
@@ -623,14 +643,14 @@
     document.getElementById('lastSeen').value = new Date().toISOString().split('T')[0];
 
     // Search functionality
-    document.getElementById('searchEnemies').addEventListener('input', function() {
+    document.getElementById('searchEnemies').addEventListener('input', function () {
       const searchTerm = this.value.toLowerCase();
       const enemyItems = document.querySelectorAll('.enemy-item');
-      
+
       enemyItems.forEach(item => {
         const enemyName = item.querySelector('.enemy-name').textContent.toLowerCase();
         const enemyNotes = item.querySelector('.enemy-notes')?.textContent.toLowerCase() || '';
-        
+
         if (enemyName.includes(searchTerm) || enemyNotes.includes(searchTerm)) {
           item.style.display = 'block';
         } else {
@@ -643,7 +663,7 @@
       // Validate and sanitize all inputs
       const allowedMechaTypes = ['assault-mecha', 'defense-mecha', 'scout-mecha', 'heavy-assault-mecha', 'shield-mecha', 'stealth-mecha', 'elite-assault-mecha', 'fortress-mecha', 'phantom-mecha'];
       const allowedBuildingTypes = ['hq', 'barracks', 'defense_tower', 'research_lab', 'factory', 'storage'];
-      
+
       const enemyData = {
         id: Date.now(),
         name: validateText(document.getElementById('enemyName').value || 'Unknown Enemy', 50),
@@ -729,10 +749,10 @@
 
       // Get existing enemies
       let enemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
-      
+
       // Check if enemy already exists (by name)
       const existingIndex = enemies.findIndex(enemy => enemy.name.toLowerCase() === enemyData.name.toLowerCase());
-      
+
       if (existingIndex >= 0) {
         // Update existing enemy
         enemies[existingIndex] = enemyData;
@@ -740,18 +760,18 @@
         // Add new enemy
         enemies.unshift(enemyData);
       }
-      
+
       // Keep only last 100 enemies
       if (enemies.length > 100) {
         enemies = enemies.slice(0, 100);
       }
-      
+
       // Save to localStorage
       localStorage.setItem('knownEnemies', JSON.stringify(enemies));
-      
+
       // Refresh display
       displayEnemies();
-      
+
       // Show success message
       const button = event.target;
       const originalText = button.textContent;
@@ -766,7 +786,7 @@
     function displayEnemies() {
       const enemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
       const enemiesContainer = document.getElementById('enemiesList');
-      
+
       if (enemies.length === 0) {
         enemiesContainer.innerHTML = '<p style="color: #9ca3af; text-align: center; padding: 20px;">No enemies recorded yet. Add your first enemy to see it here!</p>';
         return;
@@ -842,7 +862,7 @@
     function clearForm() {
       document.getElementById('enemyName').value = '';
       document.getElementById('lastSeen').value = new Date().toISOString().split('T')[0];
-      
+
       // Clear all troop tiers
       document.getElementById('armyT1').value = '';
       document.getElementById('armyT2').value = '';
@@ -860,9 +880,9 @@
       document.getElementById('navyT2').value = '';
       document.getElementById('navyT3').value = '';
       document.getElementById('navyT4').value = '';
-      
+
       document.getElementById('attackComposition').value = '';
-      
+
       // Clear all trap tiers
       document.getElementById('trapT0').value = '';
       document.getElementById('trapT1a').value = '';
@@ -877,7 +897,7 @@
       document.getElementById('trapT4a').value = '';
       document.getElementById('trapT4b').value = '';
       document.getElementById('trapT4c').value = '';
-      
+
       document.getElementById('armyRatio').value = '';
       document.getElementById('commandosRatio').value = '';
       document.getElementById('airforceRatio').value = '';
@@ -904,7 +924,7 @@
 
     function exportEnemiesToCSV() {
       const enemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
-      
+
       if (enemies.length === 0) {
         alert('No enemy data to export. Please add some enemies first.');
         return;
@@ -1037,9 +1057,182 @@
       }, 2000);
     }
 
-    // Load enemies on page load
+    // Input cross-validation functions
+    function validateTroopRatios() {
+      const armyRatio = validateNumber(document.getElementById('armyRatio').value, 0, 100);
+      const commandosRatio = validateNumber(document.getElementById('commandosRatio').value, 0, 100);
+      const airforceRatio = validateNumber(document.getElementById('airforceRatio').value, 0, 100);
+      const navyRatio = validateNumber(document.getElementById('navyRatio').value, 0, 100);
+
+      const total = armyRatio + commandosRatio + airforceRatio + navyRatio;
+
+      if (total > 100) {
+        showValidationError('Troop ratios cannot exceed 100% total');
+        return false;
+      }
+
+      return true;
+    }
+
+    function validateTrapConsistency() {
+      const trapRatio = validateNumber(document.getElementById('trapRatio').value, 0, 100);
+      const trapCount = validateNumber(document.getElementById('trapCount').value, 0, 999999999);
+
+      // Calculate total individual traps
+      const totalTraps =
+        validateNumber(document.getElementById('trapT0').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT1a').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT1b').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT1c').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT2a').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT2b').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT2c').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT3a').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT3b').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT3c').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT4a').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT4b').value, 0, 999999999) +
+        validateNumber(document.getElementById('trapT4c').value, 0, 999999999);
+
+      // If both trap count and individual traps are specified, they should be consistent
+      if (trapCount > 0 && totalTraps > 0 && Math.abs(trapCount - totalTraps) > trapCount * 0.1) {
+        showValidationWarning(`Trap count (${trapCount.toLocaleString()}) doesn't match sum of individual traps (${totalTraps.toLocaleString()})`);
+      }
+
+      return true;
+    }
+
+    function validateMechaLevel() {
+      const mechaLevel = validateNumber(document.getElementById('mechaLevel').value, 1, 40);
+      const mechaCount = validateNumber(document.getElementById('mechaCount').value, 0, 999999999);
+
+      if (mechaCount > 0 && (mechaLevel < 1 || mechaLevel > 40)) {
+        showValidationError('Mecha level must be between 1 and 40');
+        return false;
+      }
+
+      return true;
+    }
+
+    function validateBaseLevel() {
+      const baseLevel = validateNumber(document.getElementById('baseLevel').value, 1, 40);
+      const buildingLevel = validateNumber(document.getElementById('buildingLevel').value, 1, 40);
+
+      if (buildingLevel > baseLevel) {
+        showValidationWarning('Building level typically should not exceed base level');
+      }
+
+      return true;
+    }
+
+    function showValidationError(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000; font-weight: bold;
+        border-left: 4px solid #dc2626;
+      `;
+      toast.textContent = '❌ ' + message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 5000);
+    }
+
+    function showValidationWarning(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: #f59e0b; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000; font-weight: bold;
+        border-left: 4px solid #d97706;
+      `;
+      toast.textContent = '⚠️ ' + message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 4000);
+    }
+
+    function showValidationSuccess(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: #10b981; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000; font-weight: bold;
+        border-left: 4px solid #059669;
+      `;
+      toast.textContent = '✅ ' + message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 3000);
+    }
+
+    // Enhanced save function with validation
+    function saveEnemyWithValidation() {
+      // Run all validations
+      const validations = [
+        validateTroopRatios(),
+        validateTrapConsistency(),
+        validateMechaLevel(),
+        validateBaseLevel()
+      ];
+
+      const hasErrors = validations.some(v => v === false);
+
+      if (hasErrors) {
+        showValidationError('Please fix validation errors before saving');
+        return;
+      }
+
+      // If validations pass, save the enemy
+      saveEnemy();
+      showValidationSuccess('Enemy data saved successfully with validation checks passed');
+    }
+
+    // Add real-time validation to key inputs
+    function setupRealTimeValidation() {
+      // Ratio validation
+      const ratioInputs = ['armyRatio', 'commandosRatio', 'airforceRatio', 'navyRatio'];
+      ratioInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.addEventListener('blur', validateTroopRatios);
+        }
+      });
+
+      // Trap validation
+      const trapInputs = ['trapRatio', 'trapCount'];
+      trapInputs.forEach(id => {
+        const input = document.getElementById(id);
+        if (input) {
+          input.addEventListener('blur', validateTrapConsistency);
+        }
+      });
+
+      // Mecha validation
+      const mechaLevel = document.getElementById('mechaLevel');
+      if (mechaLevel) {
+        mechaLevel.addEventListener('blur', validateMechaLevel);
+      }
+
+      // Base validation
+      const buildingLevel = document.getElementById('buildingLevel');
+      if (buildingLevel) {
+        buildingLevel.addEventListener('blur', validateBaseLevel);
+      }
+    }
+
+    // Load enemies on page load and setup validation
     displayEnemies();
+    setupRealTimeValidation();
   </script>
   <script src="../src/scripts/components/shared-nav.js"></script>
 </body>
+
 </html>

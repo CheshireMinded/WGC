@@ -1054,10 +1054,163 @@
       historyContainer.innerHTML = analyticsHTML + '<button onclick="displayHistory()" style="background: #6b7280; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; margin: 10px 0;">← Back to Battle History</button>';
     }
 
+    function loadKnownEnemies() {
+      const enemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
+      const select = document.getElementById('battleAgainst');
+      
+      // Clear existing options except the first one
+      while (select.children.length > 1) {
+        select.removeChild(select.lastChild);
+      }
+      
+      // Add enemies from known enemies database
+      enemies.forEach(enemy => {
+        const option = document.createElement('option');
+        option.value = enemy.name;
+        option.textContent = enemy.name;
+        select.appendChild(option);
+      });
+    }
+
+    function handleEnemySelection() {
+      const selectedEnemy = document.getElementById('battleAgainst').value;
+      if (!selectedEnemy) return;
+      
+      // Try to load enemy data from known enemies
+      const enemies = JSON.parse(localStorage.getItem('knownEnemies') || '[]');
+      const enemy = enemies.find(e => e.name === selectedEnemy);
+      
+      if (enemy && enemy.troops) {
+        // Auto-fill enemy troop data if available
+        const totalEnemyTroops = 
+          enemy.troops.army.t1 + enemy.troops.army.t2 + enemy.troops.army.t3 + enemy.troops.army.t4 +
+          enemy.troops.commandos.t1 + enemy.troops.commandos.t2 + enemy.troops.commandos.t3 + enemy.troops.commandos.t4 +
+          enemy.troops.airforce.t1 + enemy.troops.airforce.t2 + enemy.troops.airforce.t3 + enemy.troops.airforce.t4 +
+          enemy.troops.navy.t1 + enemy.troops.navy.t2 + enemy.troops.navy.t3 + enemy.troops.navy.t4;
+        
+        if (totalEnemyTroops > 0) {
+          // Calculate approximate distribution (simplified to 3 categories)
+          const armyTotal = enemy.troops.army.t1 + enemy.troops.army.t2 + enemy.troops.army.t3 + enemy.troops.army.t4;
+          const marinesTotal = enemy.troops.commandos.t1 + enemy.troops.commandos.t2 + enemy.troops.commandos.t3 + enemy.troops.commandos.t4;
+          const airforceTotal = enemy.troops.airforce.t1 + enemy.troops.airforce.t2 + enemy.troops.airforce.t3 + enemy.troops.airforce.t4;
+          
+          document.getElementById('enemyArmySent').value = armyTotal;
+          document.getElementById('enemyMarinesSent').value = marinesTotal;
+          document.getElementById('enemyAirforceSent').value = airforceTotal;
+          
+          showToast('Enemy data loaded from Known Enemies database', 'success');
+        }
+      }
+    }
+
+    function addNewEnemy() {
+      const enemyName = prompt('Enter enemy name:');
+      if (enemyName && enemyName.trim()) {
+        const select = document.getElementById('battleAgainst');
+        const option = document.createElement('option');
+        option.value = enemyName.trim();
+        option.textContent = enemyName.trim();
+        select.appendChild(option);
+        select.value = enemyName.trim();
+        
+        showToast('New enemy added to list', 'success');
+      }
+    }
+
+    function toggleEnemyTroopsSource() {
+      const checkbox = document.getElementById('enemyFromCalculator');
+      const enemyInputs = ['enemyArmySent', 'enemyMarinesSent', 'enemyAirforceSent'];
+      
+      if (checkbox.checked) {
+        // Try to load from calculator data
+        const calculatorData = localStorage.getItem('lastCalculatorData');
+        if (calculatorData) {
+          const data = JSON.parse(calculatorData);
+          document.getElementById('enemyArmySent').value = data.army || '';
+          document.getElementById('enemyMarinesSent').value = data.marines || '';
+          document.getElementById('enemyAirforceSent').value = data.airforce || '';
+          
+          // Disable manual editing
+          enemyInputs.forEach(id => {
+            document.getElementById(id).disabled = true;
+            document.getElementById(id).style.opacity = '0.6';
+          });
+          
+          showToast('Enemy troops loaded from calculator', 'success');
+        } else {
+          checkbox.checked = false;
+          showToast('No calculator data found', 'error');
+        }
+      } else {
+        // Enable manual editing
+        enemyInputs.forEach(id => {
+          document.getElementById(id).disabled = false;
+          document.getElementById(id).style.opacity = '1';
+        });
+      }
+    }
+
+    function showToast(message, type = 'info') {
+      const toast = document.createElement('div');
+      const bgColor = type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6';
+      toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: ${bgColor}; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000; font-weight: bold;
+        animation: slideIn 0.3s ease-out;
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => {
+        if (document.body.contains(toast)) {
+          document.body.removeChild(toast);
+        }
+      }, 3000);
+    }
+
+    // Add CSS for toast animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+      }
+    `;
+    document.head.appendChild(style);
+
     // Load history and auto-load calculator data on page load
     displayHistory();
     autoLoadCalculatorData();
     loadKnownEnemies();
+
+    // Add input validation
+    document.addEventListener('DOMContentLoaded', function() {
+      const numberInputs = document.querySelectorAll('input[type="number"]');
+      numberInputs.forEach(input => {
+        input.addEventListener('input', function() {
+          // Prevent negative values
+          if (this.value < 0) this.value = 0;
+          
+          // Cross-validation: survivors can't exceed sent troops
+          if (this.id.includes('Lost')) {
+            const troopType = this.id.replace('Lost', '');
+            const sentInput = document.getElementById(troopType + 'Sent');
+            const survivedInput = document.getElementById(troopType + 'Survived');
+            
+            if (sentInput && survivedInput) {
+              const sent = parseInt(sentInput.value) || 0;
+              const lost = parseInt(this.value) || 0;
+              
+              if (lost > sent) {
+                this.value = sent;
+                showToast(`Losses cannot exceed troops sent (${sent.toLocaleString()})`, 'error');
+              }
+            }
+          }
+          
+          calculateSurvivors();
+        });
+      });
+    });
 </script>
   <script src="../src/scripts/components/shared-nav.js"></script>
 </body>

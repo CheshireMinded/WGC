@@ -348,10 +348,414 @@
     </div>
   </div>
 
-  <script src="../src/scripts/app.js?v=2"></script>
   <script>
+    // Troop Swap Calculator Implementation
+    const TOTAL_DEPLOYMENT = 6462500;
+    const MAX_PLAYERS = 8;
+    let playerCount = 0;
+
+    // Security: Input sanitization
+    function sanitizeInput(input) {
+      if (typeof input !== 'string') return '';
+      return input.replace(/[<>\"'&]/g, function(match) {
+        const escape = {
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#x27;',
+          '&': '&amp;'
+        };
+        return escape[match];
+      });
+    }
+
+    // Utility functions
+    const clamp = (n, min, max) => Math.min(max, Math.max(min, n));
+    function num(v, d=0){ const n = Number(String(v).trim()); return Number.isFinite(n) ? n : d; }
+
+    // Normalize three percentages to sum exactly 100 using largest remainder
+    function normalizeTriple(a, m, f){
+      a = clamp(Math.trunc(num(a)), 0, 100);
+      m = clamp(Math.trunc(num(m)), 0, 100);
+      f = clamp(Math.trunc(num(f)), 0, 100);
+      const sum = a + m + f;
+      if (sum === 100) return { a, m, f, normalized:false };
+      if (sum === 0) return { a:34, m:33, f:33, normalized:true };
+      
+      const scale = 100 / sum;
+      const aa = Math.floor(a * scale);
+      const mm = Math.floor(m * scale);
+      const ff = Math.floor(f * scale);
+      let assigned = aa + mm + ff;
+      let parts = [
+        {k:'a', frac: a*scale - aa, v: aa},
+        {k:'m', frac: m*scale - mm, v: mm},
+        {k:'f', frac: f*scale - ff, v: ff}
+      ].sort((x,y)=> y.frac - x.frac);
+      while (assigned < 100) { parts[0].v++; assigned++; parts.sort((x,y)=> y.frac - x.frac); }
+      const out = { a: parts.find(p=>p.k==='a').v, m: parts.find(p=>p.k==='m').v, f: parts.find(p=>p.k==='f').v, normalized:true };
+      return out;
+    }
+
+    // Allocate integer counts from total by percentages exactly
+    function allocateCounts(total, aPct, mPct, fPct){
+      const aExact = total * aPct / 100;
+      const mExact = total * mPct / 100;
+      const fExact = total * fPct / 100;
+
+      const aFloor = Math.floor(aExact);
+      const mFloor = Math.floor(mExact);
+      const fFloor = Math.floor(fExact);
+
+      let assigned = aFloor + mFloor + fFloor;
+      let remainder = total - assigned;
+
+      const parts = [
+        {k:'a', frac: aExact - aFloor, v: aFloor},
+        {k:'m', frac: mExact - mFloor, v: mFloor},
+        {k:'f', frac: fExact - fFloor, v: fFloor}
+      ].sort((x,y)=> y.frac - x.frac);
+
+      while (remainder > 0) {
+        parts[0].v++;
+        remainder--;
+        parts.sort((x,y)=> y.frac - x.frac);
+      }
+
+      return {
+        a: parts.find(p=>p.k==='a').v,
+        m: parts.find(p=>p.k==='m').v,
+        f: parts.find(p=>p.k==='f').v
+      };
+    }
+
+    // Initialize page
+    function init() {
+      updateInitialRatio();
+      updateBars();
+      
+      // Add event listeners
+      document.getElementById('initArmy').addEventListener('input', updateInitialRatio);
+      document.getElementById('initMarines').addEventListener('input', updateInitialRatio);
+      document.getElementById('initAirforce').addEventListener('input', updateInitialRatio);
+      document.getElementById('addBtn').addEventListener('click', addPlayer);
+      document.getElementById('removeBtn').addEventListener('click', removeLastPlayer);
+      document.getElementById('calculateBtn').addEventListener('click', calculateNewRatio);
+      document.getElementById('resetBtn').addEventListener('click', resetChart);
+      document.getElementById('calculateNeededBtn').addEventListener('click', calculateNeeded);
+      document.getElementById('currentTotal').addEventListener('input', calculateNeeded);
+      document.getElementById('showOriginal').addEventListener('change', updateBars);
+      document.getElementById('showBackground').addEventListener('change', updateBars);
+    }
+
+    function updateInitialRatio() {
+      const a = num(document.getElementById('initArmy').value);
+      const m = num(document.getElementById('initMarines').value);
+      const f = num(document.getElementById('initAirforce').value);
+      
+      // Validate input ranges
+      if (a < 0 || m < 0 || f < 0) {
+        showError('Percentages cannot be negative');
+        return;
+      }
+      
+      if (a > 100 || m > 100 || f > 100) {
+        showError('Individual percentages cannot exceed 100%');
+        return;
+      }
+      
+      const norm = normalizeTriple(a, m, f);
+      
+      if (norm.normalized) {
+        document.getElementById('initArmy').value = norm.a;
+        document.getElementById('initMarines').value = norm.m;
+        document.getElementById('initAirforce').value = norm.f;
+        document.getElementById('initStatus').style.display = 'inline';
+        showSuccess('Ratios automatically normalized to 100%');
+      } else {
+        document.getElementById('initStatus').style.display = 'none';
+      }
+      
+      updateBars();
+    }
+
+    function addPlayer() {
+      if (playerCount >= MAX_PLAYERS) {
+        showError('Maximum 8 players allowed');
+        return;
+      }
+      
+      playerCount++;
+      const container = document.getElementById('playersContainer');
+      
+      const playerDiv = document.createElement('div');
+      playerDiv.className = 'player';
+      playerDiv.id = `player${playerCount}`;
+      
+      playerDiv.innerHTML = `
+        <div class="flex-row">
+          <strong>Player ${playerCount}:</strong>
+          <input type="text" class="name-input" placeholder="Player name" />
+          <button class="copy-player-btn" onclick="copyPlayer(${playerCount})">Copy</button>
+          <button class="remove-player-btn" onclick="removePlayer(${playerCount})">Remove</button>
+        </div>
+        <div class="flex-row">
+          <span class="troop-label army">Army</span><input type="number" class="army-input" value="0" min="0" />
+          <span class="troop-label marines">Marines</span><input type="number" class="marines-input" value="0" min="0" />
+          <span class="troop-label airforce">Air Force</span><input type="number" class="airforce-input" value="0" min="0" />
+        </div>
+        <div class="troop-count" id="troopCount${playerCount}">Total: 0 troops</div>
+      `;
+      
+      container.appendChild(playerDiv);
+      
+      // Add event listeners for auto-calculation
+      const inputs = playerDiv.querySelectorAll('input[type="number"]');
+      inputs.forEach(input => {
+        input.addEventListener('input', () => updatePlayerTotal(playerCount));
+      });
+      
+      document.getElementById('removeBtn').disabled = false;
+      updatePlayerTotal(playerCount);
+    }
+
+    function removeLastPlayer() {
+      if (playerCount === 0) return;
+      
+      const playerDiv = document.getElementById(`player${playerCount}`);
+      if (playerDiv) {
+        playerDiv.remove();
+      }
+      
+      playerCount--;
+      
+      if (playerCount === 0) {
+        document.getElementById('removeBtn').disabled = true;
+      }
+    }
+
+    function removePlayer(id) {
+      const playerDiv = document.getElementById(`player${id}`);
+      if (playerDiv) {
+        playerDiv.remove();
+      }
+      
+      // Renumber remaining players
+      const container = document.getElementById('playersContainer');
+      const players = container.querySelectorAll('.player');
+      playerCount = players.length;
+      
+      players.forEach((player, index) => {
+        const newId = index + 1;
+        player.id = `player${newId}`;
+        player.querySelector('strong').textContent = `Player ${newId}:`;
+        player.querySelector('.copy-player-btn').setAttribute('onclick', `copyPlayer(${newId})`);
+        player.querySelector('.remove-player-btn').setAttribute('onclick', `removePlayer(${newId})`);
+        player.querySelector('.troop-count').id = `troopCount${newId}`;
+      });
+      
+      if (playerCount === 0) {
+        document.getElementById('removeBtn').disabled = true;
+      }
+    }
+
+    function updatePlayerTotal(playerId) {
+      const playerDiv = document.getElementById(`player${playerId}`);
+      if (!playerDiv) return;
+      
+      const armyInput = playerDiv.querySelector('.army-input');
+      const marinesInput = playerDiv.querySelector('.marines-input');
+      const airforceInput = playerDiv.querySelector('.airforce-input');
+      
+      const army = num(armyInput.value);
+      const marines = num(marinesInput.value);
+      const airforce = num(airforceInput.value);
+      const total = army + marines + airforce;
+      
+      const countDiv = document.getElementById(`troopCount${playerId}`);
+      countDiv.textContent = `Total: ${total.toLocaleString()} troops`;
+    }
+
+    function copyPlayer(playerId) {
+      const playerDiv = document.getElementById(`player${playerId}`);
+      if (!playerDiv) return;
+      
+      const nameInput = playerDiv.querySelector('.name-input');
+      const armyInput = playerDiv.querySelector('.army-input');
+      const marinesInput = playerDiv.querySelector('.marines-input');
+      const airforceInput = playerDiv.querySelector('.airforce-input');
+      
+      const name = nameInput.value || `Player ${playerId}`;
+      const army = num(armyInput.value);
+      const marines = num(marinesInput.value);
+      const airforce = num(airforceInput.value);
+      const total = army + marines + airforce;
+      
+      const text = `${name}: Army ${army.toLocaleString()}, Marines ${marines.toLocaleString()}, Air Force ${airforce.toLocaleString()} (Total: ${total.toLocaleString()})`;
+      
+      navigator.clipboard.writeText(text).then(() => {
+        showSuccess('Player data copied to clipboard!');
+      }).catch(() => {
+        showError('Failed to copy to clipboard');
+      });
+    }
+
+    function calculateNewRatio() {
+      const players = document.querySelectorAll('.player');
+      if (players.length === 0) {
+        showError('Add at least one player to calculate new ratio');
+        return;
+      }
+      
+      let totalArmy = 0, totalMarines = 0, totalAirforce = 0;
+      
+      players.forEach(player => {
+        const army = num(player.querySelector('.army-input').value);
+        const marines = num(player.querySelector('.marines-input').value);
+        const airforce = num(player.querySelector('.airforce-input').value);
+        
+        totalArmy += army;
+        totalMarines += marines;
+        totalAirforce += airforce;
+      });
+      
+      const grandTotal = totalArmy + totalMarines + totalAirforce;
+      
+      if (grandTotal === 0) {
+        showError('Enter troop counts for at least one player');
+        return;
+      }
+      
+      const armyPct = Math.round((totalArmy / grandTotal) * 100);
+      const marinesPct = Math.round((totalMarines / grandTotal) * 100);
+      const airforcePct = Math.round((totalAirforce / grandTotal) * 100);
+      
+      // Normalize to exactly 100%
+      const norm = normalizeTriple(armyPct, marinesPct, airforcePct);
+      
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerHTML = `
+        <h3>New Alliance Ratio</h3>
+        <div class="flex-row" style="justify-content: center; gap: 20px; margin: 15px 0;">
+          <div><span class="troop-label army">Army</span> ${norm.a}%</div>
+          <div><span class="troop-label marines">Marines</span> ${norm.m}%</div>
+          <div><span class="troop-label airforce">Air Force</span> ${norm.f}%</div>
+        </div>
+        <p><strong>Total Swapped Troops:</strong> ${grandTotal.toLocaleString()}</p>
+        <p class="small">Based on ${players.length} player swap(s)</p>
+      `;
+      
+      updateBars(norm.a, norm.m, norm.f);
+    }
+
+    function calculateNeeded() {
+      const currentTotal = num(document.getElementById('currentTotal').value);
+      if (currentTotal <= 0) {
+        document.getElementById('neededResult').innerHTML = '';
+        return;
+      }
+      
+      const needed = TOTAL_DEPLOYMENT - currentTotal;
+      if (needed <= 0) {
+        document.getElementById('neededResult').innerHTML = '<p style="color: #10b981;">✅ Deployment complete!</p>';
+        return;
+      }
+      
+      const a = num(document.getElementById('initArmy').value);
+      const m = num(document.getElementById('initMarines').value);
+      const f = num(document.getElementById('initAirforce').value);
+      
+      const norm = normalizeTriple(a, m, f);
+      const counts = allocateCounts(needed, norm.a, norm.m, norm.f);
+      
+      const resultText = `Army: ${counts.a.toLocaleString()}, Marines: ${counts.m.toLocaleString()}, Air Force: ${counts.f.toLocaleString()}`;
+      
+      document.getElementById('neededResult').innerHTML = `
+        <p><strong>Still needed (${needed.toLocaleString()} troops):</strong></p>
+        <div class="input-with-button">
+          <input type="text" value="${resultText}" readonly style="font-family: monospace;" />
+          <button class="copy-button" onclick="copyNeeded('${resultText}')">Copy</button>
+        </div>
+      `;
+    }
+
+    function copyNeeded(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        const tooltip = document.getElementById('neededTooltip');
+        tooltip.classList.add('show');
+        setTimeout(() => tooltip.classList.remove('show'), 1500);
+      });
+    }
+
+    function updateBars(newA, newM, newF) {
+      const showOriginal = document.getElementById('showOriginal').checked;
+      const showBackground = document.getElementById('showBackground').checked;
+      
+      // Original ratios
+      const origA = num(document.getElementById('initArmy').value);
+      const origM = num(document.getElementById('initMarines').value);
+      const origF = num(document.getElementById('initAirforce').value);
+      
+      // New ratios (if provided)
+      const a = newA !== undefined ? newA : origA;
+      const m = newM !== undefined ? newM : origM;
+      const f = newF !== undefined ? newF : origF;
+      
+      // Update original bars
+      document.getElementById('barArmyOrig').style.width = showOriginal ? `${origA}%` : '0%';
+      document.getElementById('barMarinesOrig').style.width = showOriginal ? `${origM}%` : '0%';
+      document.getElementById('barAirforceOrig').style.width = showOriginal ? `${origF}%` : '0%';
+      
+      // Update new bars
+      document.getElementById('barArmyNew').style.width = `${a}%`;
+      document.getElementById('barMarinesNew').style.width = `${m}%`;
+      document.getElementById('barAirforceNew').style.width = `${f}%`;
+      
+      // Update bar text
+      document.getElementById('barArmyNew').textContent = a > 5 ? `${a}%` : '';
+      document.getElementById('barMarinesNew').textContent = m > 5 ? `${m}%` : '';
+      document.getElementById('barAirforceNew').textContent = f > 5 ? `${f}%` : '';
+      
+      // Show/hide background
+      const container = document.querySelector('.bar-container');
+      if (container) {
+        container.style.background = showBackground ? '#333' : 'transparent';
+      }
+    }
+
+    function resetChart() {
+      document.getElementById('result').innerHTML = '';
+      updateBars();
+    }
+
+    function showError(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: #ef4444; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000; font-weight: bold;
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 3000);
+    }
+
+    function showSuccess(message) {
+      const toast = document.createElement('div');
+      toast.style.cssText = `
+        position: fixed; top: 20px; right: 20px; background: #10b981; color: white;
+        padding: 12px 20px; border-radius: 8px; z-index: 1000; font-weight: bold;
+      `;
+      toast.textContent = message;
+      document.body.appendChild(toast);
+      setTimeout(() => document.body.removeChild(toast), 3000);
+    }
+
+    // Initialize when page loads
+    document.addEventListener('DOMContentLoaded', init);
+
+    // Service Worker Registration
     if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./service-worker.js').then(registration => {
+      navigator.serviceWorker.register('../service-worker.js').then(registration => {
         console.log('SW registered: ', registration);
         
         registration.addEventListener('updatefound', () => {
